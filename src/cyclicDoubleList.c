@@ -48,6 +48,22 @@ extern bool cdListIsEmpty(CDList *list)
     return list->forward == NULL && list->next->forward == NULL;
 }
 
+extern void deleteList(CDList *list)
+{
+    if (!list)
+        return;
+
+    CDList *foo = list->next;
+
+    while (foo != list)
+    {
+        foo = foo->next;
+        free(foo->prev);
+    }
+
+    free(list);
+}
+
 //extern void printList(CDList *list)
 //{
 //    CDList *foo = list;

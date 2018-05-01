@@ -49,6 +49,12 @@ extern void deleteFromCDList(CDList *toDelete);
  */
 extern bool cdListIsEmpty(CDList *list);
 
+/** @brief Usuwa całą listę.
+ * Usuwa całą listę włącznie ze strażnikiem.
+ * @param list - wskaźnik na listę.
+ */
+extern void deleteList(CDList *list);
+
 ///** @brief Wypisuje na ekranie listę.
 // * Wypisuje na ekranie wszystkie elementy listy łacznie ze strażnikami.
 // * @param list - wskaźnik na listę.
