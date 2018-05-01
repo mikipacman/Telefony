@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(wielomiany C)
+project(Telefonyls C)
 
 if (NOT CMAKE_BUILD_TYPE)
     message(STATUS "No build type selected, default to Release")
@@ -23,7 +23,10 @@ set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra")
 set(SOURCE_FILES
     src/phone_forward.c
     src/phone_forward.h
-    src/phone_forward_example.c)
+    #src/phone_forward_example.c
+    src/main.c
+    src/cyclicDoubleList.c
+    src/cyclicDoubleList.h)
 
 # Wskazujemy plik wykonywalny.
 add_executable(phone_forward ${SOURCE_FILES})
