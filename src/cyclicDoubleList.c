@@ -1,5 +1,6 @@
 #include <stdbool.h>
-#include <stdio.h>"
+#include <string.h>
+#include <stdio.h>
 #include "cyclicDoubleList.h"
 #include "phone_forward.h"
 
@@ -9,21 +10,28 @@ extern CDList* initCDList()
 
     if (!toReturn)
         return NULL;
-    toReturn->forward = NULL;
+    toReturn->num = NULL;
     toReturn->next = toReturn;
     toReturn->prev = toReturn;
 
     return toReturn;
 }
 
-extern CDList* addToCDList(CDList *list, PhoneForward *toAdd)
+extern CDList* addToCDList(CDList *list, char *toAdd, int toAddLength)
 {
     CDList* newNode = malloc(sizeof(CDList));
 
     if (!newNode || !toAdd)
         return NULL;
 
-    newNode->forward = toAdd;
+    char *numCopy;
+
+    if ((numCopy = (char*)malloc(sizeof(char) * (toAddLength + 1))) == NULL)
+        return NULL;
+
+    strcpy(numCopy, toAdd);
+
+    newNode->num = numCopy;
 
     CDList *foo = list->next;
     list->next = newNode;
@@ -36,6 +44,10 @@ extern CDList* addToCDList(CDList *list, PhoneForward *toAdd)
 
 extern void deleteFromCDList(CDList *toDelete)
 {
+    if (!toDelete)
+        return;
+
+    free(toDelete->num);
     CDList *prev = toDelete->prev, *next = toDelete->next;
     prev->next = next;
     next->prev = prev;
@@ -45,7 +57,7 @@ extern void deleteFromCDList(CDList *toDelete)
 
 extern bool cdListIsEmpty(CDList *list)
 {
-    return list->forward == NULL && list->next->forward == NULL;
+    return list->num == NULL && list->next->num == NULL;
 }
 
 extern void deleteList(CDList *list)
@@ -58,9 +70,11 @@ extern void deleteList(CDList *list)
     while (foo != list)
     {
         foo = foo->next;
+        free(foo->prev->num);
         free(foo->prev);
     }
 
+    free(list->num);
     free(list);
 }
 

@@ -12,29 +12,36 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include "cyclicDoubleList.h"
 
 /**
  * Struktura przechowująca przekierowania numerów telefonów.
  */
+
 typedef struct PF
 {
-    struct PF* nextDigit[10];
-    struct PF* forward;
-    struct CDList* listOfFwdToThisNum;
-    char* currentNumber;
+    char currentChar;
+    char *forward;
+    struct CD *placeInForwardList;
+    struct CD *listOfFwdToThisNum;
+    struct PF *nextDigit[10];
 }PhoneForward;
 
 /**
  * Struktura przechowująca ciąg numerów telefonów.
  */
-typedef struct PN PhoneNumbers;
+typedef struct PN
+{
+    char** arrOfPN;
+    int numOfPN;
+}PhoneNumbers;
 
 /** @brief Tworzy nową strukturę.
  * Tworzy nową strukturę niezawierającą żadnych przekierowań.
  * @return Wskaźnik na utworzoną strukturę lub NULL, gdy nie udało się
  *         zaalokować pamięci.
  */
-PhoneForward * phfwdNew(void);
+PhoneForward* phfwdNew(void);
 
 /** @brief Usuwa strukturę.
  * Usuwa strukturę wskazywaną przez @p pf. Nic nie robi, jeśli wskaźnik ten ma
@@ -81,7 +88,7 @@ void phfwdRemove(PhoneForward *pf, char const *num);
  * @return Wskaźnik na strukturę przechowującą ciąg numerów lub NULL, gdy nie
  *         udało się zaalokować pamięci.
  */
-PhoneNumbers const * phfwdGet(PhoneForward *pf, char const *num);
+PhoneNumbers const* phfwdGet(PhoneForward *pf, char const *num);
 
 /** @brief Wyznacza przekierowania na dany numer.
  * Wyznacza wszystkie przekierowania na podany numer. Wynikowy ciąg zawiera też
@@ -94,7 +101,7 @@ PhoneNumbers const * phfwdGet(PhoneForward *pf, char const *num);
  * @return Wskaźnik na strukturę przechowującą ciąg numerów lub NULL, gdy nie
  *         udało się zaalokować pamięci.
  */
-PhoneNumbers const * phfwdReverse(PhoneForward *pf, char const *num);
+PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num);
 
 /** @brief Usuwa strukturę.
  * Usuwa strukturę wskazywaną przez @p pnum. Nic nie robi, jeśli wskaźnik ten ma
@@ -113,6 +120,6 @@ static inline void phnumDelete(PhoneNumbers const *pnum) {
  * @return Wskaźnik na napis. Wartość NULL, jeśli wskaźnik @p pnum ma wartość
  *         NULL lub indeks ma za dużą wartość.
  */
-char const * phnumGet(PhoneNumbers const *pnum, size_t idx);
+char const* phnumGet(PhoneNumbers const *pnum, size_t idx);
 
 #endif /* __PHONE_FORWARD_H__ */

@@ -10,13 +10,16 @@
 
 #include "phone_forward.h"
 
+// TODO: ogarnąć co się dzieje z tymi structami i typedefami.
+// TODO: Czemu nie mogę w tym pliku użyć PhoneForward tylko struct PF?
+
 /**
  * Struktura listy. Przyjmujemy, że strażnika, będzie rozpoznawać po tym,
- * że wskaźnik @p forward będzie ustawiony na NULL.
+ * że wskaźnik @p num będzie NULL'em.
  */
 typedef struct CD
 {
-    PhoneForward *forward;
+    char *num;
     struct CD *next, *prev;
 }CDList;
 
@@ -27,13 +30,14 @@ typedef struct CD
 extern CDList* initCDList();
 
 /** @brief Dodaje to istniejącej listy podany element.
- * Dodaje do niepustej listy @p list element @p toAdd.
+ * Dodaje do niepustej listy @p list element @p toAdd. Napis @p toAdd jest kopiowany.
  * @param[in] list - wskaźnik na niepustą listę.
  * @param[in] toAdd - wskaźnik na element do dodania (nie może być NULL).
+ * @param[in] toAddLength - długość napisu @p toAdd.
  * @return Wskaźnik na nowy element listy lub NULL jeśli
  * nie udało się zaalokować pamięci lub wskaźnik @p toAdd jest NULL.
  */
-extern CDList* addToCDList(CDList *list, PhoneForward *toAdd);
+extern CDList* addToCDList(CDList *list, char *toAdd, int toAddLength);
 
 
 /** @brief Usuwa element z listy.
