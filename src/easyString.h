@@ -36,13 +36,6 @@ extern bool hasOnlyDigits(char const *string);
  */
 extern int charToInt(char c);
 
-/** @brief Zwraca długość stringa.
- * Zwraca długość stringa.
- * @param string - wskaźnik na napis.
- * @return długość napisu.
- */
-extern int getStringLength(char const *string);
-
 /** @brief Dodaj znak to stringa.
  * Zwraca nowy napis stworzony ze stringa i znaku.
  * @param[in] string - wskaźnik na napis.

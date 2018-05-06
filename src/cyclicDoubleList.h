@@ -59,10 +59,11 @@ extern bool cdListIsEmpty(CDList *list);
  */
 extern void deleteList(CDList *list);
 
-///** @brief Wypisuje na ekranie listę.
-// * Wypisuje na ekranie wszystkie elementy listy łacznie ze strażnikami.
-// * @param list - wskaźnik na listę.
-// */
-//extern void printList(CDList *list);
+/** @brief Zwraca długość listy.
+ * Zwraca ilość elementów znajdujących sie w liście nie licząc strażnika.
+ * @param list - wksaźnik na listę.
+ * @return długość listy lub -1 gdy parametr @p list to NULL.
+ */
+extern int getCDListLength(CDList *list);
 
 #endif // __CYCLIC_DOUBLE_LIST_H__

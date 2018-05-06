@@ -15,16 +15,26 @@ void try(bool b)
 int main(void)
 {
     PhoneForward *pf = phfwdNew();
+    try(phfwdAdd(pf, "1", "66664"));
+    try(phfwdAdd(pf, "123", "5"));
+    try(phfwdAdd(pf, "124", "509123"));
+    try(phfwdAdd(pf, "120", "5"));
+    try(phfwdAdd(pf, "125", "5"));
+    try(phfwdAdd(pf, "55", "5"));
+    try(phfwdAdd(pf, "555", "5"));
+    try(phfwdAdd(pf, "567", "5"));
+    try(phfwdAdd(pf, "66", "5"));
 
-    try(phfwdAdd(pf, "123", "2"));
-
-    try(phfwdAdd(pf, "12", "44"));
-
-    PhoneNumbers const *pn = phfwdGet(pf, "123");
-
-    //printf("%s\n", phnumGet(pn, 0));
-
+    PhoneNumbers const *pn = phfwdReverse(pf, "5");
+    char const *num = NULL;
+    for (int i = 0; i < pn->numOfPN; i++)
+    {
+        num = phnumGet(pn, (size_t)i);
+        printf("%s\n", num);
+        free((void*)num);
+    }
     phfwdDelete(pf);
+    phnumDelete(pn);
 
     return 0;
 }

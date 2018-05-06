@@ -108,8 +108,13 @@ PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num);
  * wartość NULL.
  * @param[in] pnum – wskaźnik na usuwaną strukturę.
  */
-static inline void phnumDelete(PhoneNumbers const *pnum) {
-  free((void*)pnum);
+static inline void phnumDelete(PhoneNumbers const *pnum)
+{
+    for (int i = 0; i < pnum->numOfPN; i++)
+        free(pnum->arrOfPN[i]);
+
+    free(pnum->arrOfPN);
+    free((void*)pnum);
 }
 
 /** @brief Udostępnia numer.

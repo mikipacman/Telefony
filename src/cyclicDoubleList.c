@@ -78,16 +78,23 @@ extern void deleteList(CDList *list)
     free(list);
 }
 
-//extern void printList(CDList *list)
-//{
-//    CDList *foo = list;
-//
-//    printf("%d ", list->val);
-//    list = list->next;
-//    while(list != foo)
-//    {
-//        printf(",%d ", list->val);
-//        list = list->next;
-//    }
-//    printf("\n");
-//}
+extern int getCDListLength(CDList *list)
+{
+    if (!list)
+        return -1;
+
+    int counter = 0;
+    CDList *foo = list->next;
+
+    if (list->num != NULL)
+        counter++;
+
+    while (foo != list)
+    {
+        if (foo->num != NULL)
+            counter++;
+        foo = foo->next;
+    }
+
+    return counter;
+}

@@ -42,16 +42,6 @@ extern int charToInt(char c)
     return c - '0';
 }
 
-extern int getStringLength(char const *string)
-{
-    int length = 0;
-
-    while (string[length] != '\0')
-        length++;
-
-    return length;
-}
-
 extern char* addCharToString(char *string, char c, int stringLength)
 {
     char *toReturn;
