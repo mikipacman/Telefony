@@ -24,6 +24,8 @@ typedef struct PF
     char *forward;
     struct CD *placeInForwardList;
     struct CD *listOfFwdToThisNum;
+    struct PF *fwdNode;
+    struct PF *father;
     struct PF *nextDigit[10];
 }PhoneForward;
 

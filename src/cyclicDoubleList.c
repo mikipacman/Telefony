@@ -17,7 +17,7 @@ extern CDList* initCDList()
     return toReturn;
 }
 
-extern CDList* addToCDList(CDList *list, char *toAdd, int toAddLength)
+extern CDList* addToCDList(CDList *list, char const *toAdd, int toAddLength)
 {
     CDList* newNode = malloc(sizeof(CDList));
 
@@ -57,6 +57,9 @@ extern void deleteFromCDList(CDList *toDelete)
 
 extern bool cdListIsEmpty(CDList *list)
 {
+    if (!list)
+        return false;
+
     return list->num == NULL && list->next->num == NULL;
 }
 
@@ -75,7 +78,9 @@ extern void deleteList(CDList *list)
     }
 
     free(list->num);
+
     free(list);
+
 }
 
 extern int getCDListLength(CDList *list)

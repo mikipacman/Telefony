@@ -37,7 +37,7 @@ extern CDList* initCDList();
  * @return Wskaźnik na nowy element listy lub NULL jeśli
  * nie udało się zaalokować pamięci lub wskaźnik @p toAdd jest NULL.
  */
-extern CDList* addToCDList(CDList *list, char *toAdd, int toAddLength);
+extern CDList* addToCDList(CDList *list, char const *toAdd, int toAddLength);
 
 
 /** @brief Usuwa element z listy.

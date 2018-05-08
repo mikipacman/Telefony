@@ -29,6 +29,12 @@ extern char* addToString(char *string, char c)
 
 extern bool hasOnlyDigits(char const *string)
 {
+    if (!string)
+        return false;
+
+    if (string[0] == '\0')
+        return false;
+
     int i = -1;
     while  (string[++i] != '\0')
         if ('0' > string[i] || string[i] > '9')
@@ -52,15 +58,14 @@ extern char* addCharToString(char *string, char c, int stringLength)
     int i = 0;
 
     while (string[i] != '\0')
-        toReturn[i] = string[i++];
+    {
+        toReturn[i] = string[i];
+        i++;
+    }
+
 
     toReturn[stringLength] = c;
     toReturn[stringLength + 1] = '\0';
 
     return toReturn;
-}
-
-extern char intToChar(int i)
-{
-    return i + '0';
 }
