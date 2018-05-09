@@ -14,28 +14,33 @@
 #include <stdlib.h>
 #include "cyclicDoubleList.h"
 
-/**
- * Struktura przechowująca przekierowania numerów telefonów.
- */
+// TODO: TESTY POZOSTAŁE medium test16 - pamięć. Test [1] from [/home/tit/Programs/IPP/Telefony/IPP-mp394669/release/bigTest/bigtest0]: ./testerka.sh: linia 21: 12457 Unicestwiony
+// valgrind --error-exitcode=15 --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all -q --log-file="valgrind.txt" ./${2} < ${f} > temp.out
+// smallTest 112
 
+/** @brief Struktura przechowująca przekierowania numerów telefonów.
+ * Struktura będąca drzewem typu trie, która przechowuje przekierowania
+ * numerów telefonów.
+ */
 typedef struct PF
 {
-    char currentChar;
-    char *forward;
-    struct CD *placeInForwardList;
-    struct CD *listOfFwdToThisNum;
-    struct PF *fwdNode;
-    struct PF *father;
-    struct PF *nextDigit[10];
+    char currentChar;               ///< Znak odpowiadający krawędzi pomiędzy node'em, a jego ojcem.
+    char *forward;                  ///< Wskaźnik na napis reprezentujący przekierowanie.
+    struct PF *fwdNode;             ///< Wskaźnik na node'a reprezentującego numer przekierowania.
+    struct PF *father;              ///< Wskaźnik na ojca.
+    struct PF *nextDigit[10];       ///< Tablica wskaźników na dzieci.
+    struct CD *listOfFwdToThisNum;  ///< Wskaźnik na strażnika listy zawierającej numery przekierowań na danego node'a.
+    struct CD *placeInForwardList;  /**< Wskaźnik na miejsce napisu odpowiadającego danemu node'owi
+                                     * w liście @p listOfFwdToThisNum node'a @p fwdNode.*/
 }PhoneForward;
 
-/**
- * Struktura przechowująca ciąg numerów telefonów.
+/** @brief Struktura przechowująca ciąg numerów telefonów.
+ * Struktura będąca tablicą napisów, która przechowuje numery telefonów.
  */
 typedef struct PN
 {
-    char** arrOfPN;
-    int numOfPN;
+    char** arrOfPN;                 ///< Wskaźnik na tablicę napisów.
+    int numOfPN;                    ///< Liczba elementów w tablicy.
 }PhoneNumbers;
 
 /** @brief Tworzy nową strukturę.
@@ -110,8 +115,11 @@ PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num);
  * wartość NULL.
  * @param[in] pnum – wskaźnik na usuwaną strukturę.
  */
-static inline void phnumDelete(PhoneNumbers const *pnum)
+static inline void phnumDelete(PhoneNumbers const *pnum) // TODO: przenieść ewentualnie do gdzie indziej.
 {
+    if (!pnum)
+        return;
+
     for (int i = 0; i < pnum->numOfPN; i++)
         free(pnum->arrOfPN[i]);
 

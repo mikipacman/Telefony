@@ -1,6 +1,5 @@
 /** @file
- * Strukura cyklicznej dwukierunkowej listy ze strażnikiem zawierającej
- * adresy do struktury PhoneForward.
+ * Strukura cyklicznej dwukierunkowej listy ze strażnikiem zawierającej napisy.
  *
  * @author Mikołaj Pacek <miki.pacman@gmail.com>
  */
@@ -13,14 +12,14 @@
 // TODO: ogarnąć co się dzieje z tymi structami i typedefami.
 // TODO: Czemu nie mogę w tym pliku użyć PhoneForward tylko struct PF?
 
-/**
- * Struktura listy. Przyjmujemy, że strażnika, będzie rozpoznawać po tym,
- * że wskaźnik @p num będzie NULL'em.
+/** @brief Struktura cyklicznej listy.
+ * Przyjmujemy, że strażnika, będzie rozpoznawać po tym, że wskaźnik @p num będzie NULL'em.
  */
 typedef struct CD
 {
-    char *num;
-    struct CD *next, *prev;
+    char *num;          ///< Wskaźnik na napis.
+    struct CD *next;    ///< Wskaźnik na następny element listy.
+    struct CD *prev;    ///< Wskaźnik na  poprzedni element listy.
 }CDList;
 
 /** @brief Inicjuje nową listę.
@@ -39,7 +38,6 @@ extern CDList* initCDList();
  */
 extern CDList* addToCDList(CDList *list, char const *toAdd, int toAddLength);
 
-
 /** @brief Usuwa element z listy.
  * Usuwa element @p toDelete z listy w której się on znajduje.
  * @param[in] toDelete - wskaźnik na element do usunięcia.
@@ -48,20 +46,20 @@ extern void deleteFromCDList(CDList *toDelete);
 
 /** @brief Określa czy lista jest pusta.
  * Określa czy lista wskazana przez @p list zawiera jedynie strażnika.
- * @param list - wskaźnik na listę.
+ * @param[in] list - wskaźnik na listę.
  * @return TRUE jeśli ma tylko strażnika, wpp FALSE.
  */
 extern bool cdListIsEmpty(CDList *list);
 
 /** @brief Usuwa całą listę.
  * Usuwa całą listę włącznie ze strażnikiem.
- * @param list - wskaźnik na listę.
+ * @param[in] list - wskaźnik na listę.
  */
 extern void deleteList(CDList *list);
 
 /** @brief Zwraca długość listy.
  * Zwraca ilość elementów znajdujących sie w liście nie licząc strażnika.
- * @param list - wksaźnik na listę.
+ * @param[in] list - wksaźnik na listę.
  * @return długość listy lub -1 gdy parametr @p list to NULL.
  */
 extern int getCDListLength(CDList *list);

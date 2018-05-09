@@ -1,3 +1,9 @@
+/** @file
+ * Implementacja strukury cyklicznej dwukierunkowej listy ze strażnikiem zawierającej napisy.
+ *
+ * @author Mikołaj Pacek <miki.pacman@gmail.com>
+ */
+
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
@@ -20,19 +26,15 @@ extern CDList* initCDList()
 extern CDList* addToCDList(CDList *list, char const *toAdd, int toAddLength)
 {
     CDList* newNode = malloc(sizeof(CDList));
-
     if (!newNode || !toAdd)
         return NULL;
 
     char *numCopy;
-
     if ((numCopy = (char*)malloc(sizeof(char) * (toAddLength + 1))) == NULL)
         return NULL;
 
     strcpy(numCopy, toAdd);
-
     newNode->num = numCopy;
-
     CDList *foo = list->next;
     list->next = newNode;
     newNode->prev = list;
@@ -69,7 +71,6 @@ extern void deleteList(CDList *list)
         return;
 
     CDList *foo = list->next;
-
     while (foo != list)
     {
         foo = foo->next;
@@ -78,9 +79,7 @@ extern void deleteList(CDList *list)
     }
 
     free(list->num);
-
     free(list);
-
 }
 
 extern int getCDListLength(CDList *list)
