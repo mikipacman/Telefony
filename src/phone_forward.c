@@ -70,7 +70,7 @@ void phfwdDelete(PhoneForward *pf)
  * rekurencyjnie dla ojca node'a. Funkcja "idzie" w stronę korzenia i usuwa co może.
  * @param[in] node - wskaźnik na node'a do usunięcia.
  */
-void removeUnnecessaryNodes(PhoneForward *node)
+void removeUnnecessaryNodesUnlessNode(PhoneForward *node, PhoneForward* toNode)
 {
     PhoneForward *nextNode;
     if (!node)
@@ -108,7 +108,8 @@ void removeUnnecessaryNodes(PhoneForward *node)
 
     /// Zapuszczamy rekurencje dla ojca.
 
-    removeUnnecessaryNodes(nextNode);
+    if (nextNode != toNode)
+        removeUnnecessaryNodesUnlessNode(nextNode, toNode);
 }
 
 /** @brief Zwraca pustą strukturę PhoneForward.
@@ -199,7 +200,7 @@ bool phfwdAdd(PhoneForward *pf, char const *num1, char const *num2)
         free(ptrForNodeNum1->forward);
         ptrForNodeNum1->forward = NULL;
         deleteFromCDList(ptrForNodeNum1->placeInForwardList);
-        removeUnnecessaryNodes(ptrForNodeNum1->fwdNode);
+        removeUnnecessaryNodesUnlessNode(ptrForNodeNum1->fwdNode, ptrForNodeNum1);
         ptrForNodeNum1->fwdNode = NULL;
     }
 
@@ -238,6 +239,12 @@ void removeNodes(PhoneForward *node)
     if (!node)
         return;
 
+    /// Usuwamy rekurencyjnie poddrzewa dzieci node'a.
+
+    for (int i = 0; i < 10; i++)
+        if (node->nextDigit[i] != NULL)
+            removeNodes(node->nextDigit[i]);
+
     /// Usuwamy przekierowanie i czyścimy ewentualnie powstałe
     /// niepotrzebne node'y na gałezi z poprzednim przekierowaniem.
 
@@ -247,15 +254,9 @@ void removeNodes(PhoneForward *node)
         node->forward = NULL;
         deleteFromCDList(node->placeInForwardList);
         node->placeInForwardList = NULL;
-        removeUnnecessaryNodes(node->fwdNode);
+        removeUnnecessaryNodesUnlessNode(node->fwdNode, node);
         node->fwdNode = NULL;
     }
-
-    /// Usuwamy rekurencyjnie poddrzewa dzieci node'a.
-
-    for (int i = 0; i < 10; i++)
-        if (node->nextDigit[i] != NULL)
-            removeNodes(node->nextDigit[i]);
 
     /// Sprawdzamy czy node ma jakieś dzieci lub coś jest na niego przekierowane.
 
