@@ -9,11 +9,8 @@
 
 #include "phone_forward.h"
 
-// TODO: ogarnąć co się dzieje z tymi structami i typedefami.
-// TODO: Czemu nie mogę w tym pliku użyć PhoneForward tylko struct PF?
-
 /** @brief Struktura cyklicznej listy.
- * Przyjmujemy, że strażnika, będzie rozpoznawać po tym, że wskaźnik @p num będzie NULL'em.
+ * Przyjmujemy, że strażnika, będziemy rozpoznawać po tym, że wskaźnik @p num będzie NULL'em.
  */
 typedef struct CD
 {
@@ -36,7 +33,7 @@ extern CDList* initCDList();
  * @return Wskaźnik na nowy element listy lub NULL jeśli
  * nie udało się zaalokować pamięci lub wskaźnik @p toAdd jest NULL.
  */
-extern CDList* addToCDList(CDList *list, char const *toAdd, int toAddLength);
+extern CDList* addToCDList(CDList *list, char const *toAdd, size_t toAddLength);
 
 /** @brief Usuwa element z listy.
  * Usuwa element @p toDelete z listy w której się on znajduje.

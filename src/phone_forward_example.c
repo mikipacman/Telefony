@@ -7,8 +7,8 @@
 
 int main() {
   char num1[MAX_LEN + 1], num2[MAX_LEN + 1];
-  struct PhoneForward *pf;
-  struct PhoneNumbers const *pnum;
+  PhoneForward *pf;
+  PhoneNumbers const *pnum;
   char const *num;
   size_t idx;
   bool result;

@@ -1,4 +1,5 @@
 /** @file
+ *
  * Implementacja interfejsu klasy przechowującej przekierowania numerów telefonicznych
  *
  * @author Mikołaj Pacek <miki.pacman@gmail.com>
@@ -19,8 +20,8 @@ PhoneForward* phfwdNew(void)
 {
     PhoneForward *newPF = malloc(sizeof(PhoneForward));
 
-    /// Tworzymy strukturę.
-    /// Jeżeli nie udało się zaalokować pamięci, zwracamy NULL.
+    // Tworzymy strukturę.
+    // Jeżeli nie udało się zaalokować pamięci, zwracamy NULL.
 
     if(!newPF)
         return NULL;
@@ -46,18 +47,18 @@ void phfwdDelete(PhoneForward *pf)
     if (!pf)
         return;
 
-    /// Zwalniamy atrybuty node'a.
+    // Zwalniamy atrybuty node'a.
 
     free(pf->forward);
     deleteList(pf->listOfFwdToThisNum);
 
-    /// Usuwamy rekurencyjnie jego dzieci.
+    // Usuwamy rekurencyjnie jego dzieci.
 
     for (int i = 0; i < 10; i++)
         if (pf->nextDigit[i] != NULL)
             phfwdDelete(pf->nextDigit[i]);
 
-    /// Zwalniamy node'a.
+    // Zwalniamy node'a.
 
     free(pf);
 }
@@ -67,21 +68,23 @@ void phfwdDelete(PhoneForward *pf)
 /** @brief Usuwa niepotrzebne node'y w gałęzi.
  * Usuwa node'y niepotrzebne, czyli takie które nie mają dzieci, przekirowania i
  * nie są przekierowaniem żadnego innego node'a. Usuwanie zapuszczane jest
- * rekurencyjnie dla ojca node'a. Funkcja "idzie" w stronę korzenia i usuwa co może.
- * @param[in] node - wskaźnik na node'a do usunięcia.
+ * rekurencyjnie dla ojca node'a. Funkcja "idzie" w stronę korzenia i usuwa co może
+ * o ile nie napotka node'a @p toNode.
+ * @param[in] node - wskaźnik na node'a do usunięcia;
+ * @param[in] toNode - wskaźnik na node'a na którym funkcja ma się zatrzymać, jeśli do niego dojdzie.
  */
-void removeUnnecessaryNodesUnlessNode(PhoneForward *node, PhoneForward* toNode)
+void removeUnnecessaryNodes(PhoneForward *node, PhoneForward* toNode)
 {
     PhoneForward *nextNode;
     if (!node)
         return;
 
-    /// Jeśli dojdziemy do korzenia, przestajemy usuwać.
+    // Jeśli dojdziemy do korzenia, przestajemy usuwać.
 
     if ((nextNode = node->father) == NULL)
         return;
 
-    /// Sprawdzamy czy node ma jakieś dzieci, przekierowanie lub coś jest na niego przekierowane.
+    // Sprawdzamy czy node ma jakieś dzieci, przekierowanie lub coś jest na niego przekierowane.
 
     bool hasAnyChildren = false;
     for (int i = 0; i < 10 && !hasAnyChildren; i++)
@@ -95,21 +98,21 @@ void removeUnnecessaryNodesUnlessNode(PhoneForward *node, PhoneForward* toNode)
     if (node->forward)
         return;
 
-    /// Tutaj wiemy, że node nie ma dzieci, przekierowania i nic nie jest na niego przekierowane.
-    /// Zatem możemy go usunąć. Najpierw usuwamy się z dzieci ojca.
+    // Tutaj wiemy, że node nie ma dzieci, przekierowania i nic nie jest na niego przekierowane.
+    // Zatem możemy go usunąć. Najpierw usuwamy się z dzieci ojca.
 
     node->father->nextDigit[charToInt(node->currentChar)] = NULL;
 
-    /// Usuwamy atrybuty node'a z node'em.
+    // Usuwamy atrybuty node'a z node'em.
 
     deleteList(node->listOfFwdToThisNum);
     node->listOfFwdToThisNum = NULL;
     free(node);
 
-    /// Zapuszczamy rekurencje dla ojca.
+    // Zapuszczamy rekurencje dla ojca.
 
     if (nextNode != toNode)
-        removeUnnecessaryNodesUnlessNode(nextNode, toNode);
+        removeUnnecessaryNodes(nextNode, toNode);
 }
 
 /** @brief Zwraca pustą strukturę PhoneForward.
@@ -123,14 +126,14 @@ static PhoneForward* emptyPhoneForwardNode(char c, PhoneForward *father)
 {
     PhoneForward *pf = (PhoneForward*)malloc(sizeof(PhoneForward));
 
-    /// Jeśli nie udało sie zaalokować pamięci zwracamy NULL.
+    // Jeśli nie udało sie zaalokować pamięci zwracamy NULL.
 
     if (!pf)
         return NULL;
     if ((pf->listOfFwdToThisNum = initCDList()) == NULL)
         return NULL;
 
-    /// Ustawiamy wszystkie atrybuty struktury.
+    // Ustawiamy wszystkie atrybuty struktury.
 
     pf->currentChar = c;
     pf->father = father;
@@ -155,17 +158,17 @@ static PhoneForward* getPtrForNumberWithConstructing(PhoneForward *pf, char cons
 {
     PhoneForward *foo = pf;
 
-    /// Idziemy po ścieżce do node'a reprezentującego napis @p num póki możemy.
+    // Idziemy po ścieżce do node'a reprezentującego napis @p num póki możemy.
 
     for (int i = 0, ind = 0; num[i] != '\0'; i++)
     {
         ind = charToInt(num[i]);
 
-        if (foo->nextDigit[ind] != NULL)    /// Jeśli jest syn, idziemy dalej.
+        if (foo->nextDigit[ind] != NULL)    // Jeśli jest syn, idziemy dalej.
         {
             foo = foo->nextDigit[ind];
         }
-        else    /// Jeśli nie ma syna, tworzymy go i idziemy dalej.
+        else    // Jeśli nie ma syna, tworzymy go i idziemy dalej.
         {
             if ((foo->nextDigit[ind] = emptyPhoneForwardNode(num[i], foo)) == NULL)
                 return NULL;
@@ -178,40 +181,40 @@ static PhoneForward* getPtrForNumberWithConstructing(PhoneForward *pf, char cons
 bool phfwdAdd(PhoneForward *pf, char const *num1, char const *num2)
 {
 
-    /// Jeśli napisy są identyczne lub któryś z nich nie jest numerem, zwracamy false.
+    // Jeśli napisy są identyczne lub któryś z nich nie jest numerem, zwracamy false.
 
     if (strcmp(num1, num2) == 0)
         return false;
     if (!hasOnlyDigits(num1) || !hasOnlyDigits(num2))
         return false;
 
-    PhoneForward *ptrForNodeNum1, *ptrForNodeNum2;  /// Wskaźniki na node'y odpowiadające @p num1 i @p num2.
+    PhoneForward *ptrForNodeNum1, *ptrForNodeNum2;  // Wskaźniki na node'y odpowiadające @p num1 i @p num2.
 
-    /// Jeśli wcześniej node odpowiadający @p num1 nie istnieje to tworzymy go.
+    // Jeśli wcześniej node odpowiadający @p num1 nie istnieje to tworzymy go.
 
     if ((ptrForNodeNum1 = getPtrForNumberWithConstructing(pf, num1)) == NULL)
         return false;
 
-    /// Jeśli wcześniej było przekierowanie usuwamy je i czyścimy ewentualnie powstałe
-    /// niepotrzebne node'y na gałezi z poprzednim przekierowaniem.
+    // Jeśli wcześniej było przekierowanie usuwamy je i czyścimy ewentualnie powstałe
+    // niepotrzebne node'y na gałezi z poprzednim przekierowaniem.
 
     if (ptrForNodeNum1->fwdNode != NULL)
     {
         free(ptrForNodeNum1->forward);
         ptrForNodeNum1->forward = NULL;
         deleteFromCDList(ptrForNodeNum1->placeInForwardList);
-        removeUnnecessaryNodesUnlessNode(ptrForNodeNum1->fwdNode, ptrForNodeNum1);
+        removeUnnecessaryNodes(ptrForNodeNum1->fwdNode, ptrForNodeNum1);
         ptrForNodeNum1->fwdNode = NULL;
     }
 
-    /// Jeśli wcześniej node odpowiadający @p num2 nie istnieje to tworzymy go.
+    // Jeśli wcześniej node odpowiadający @p num2 nie istnieje to tworzymy go.
 
     if ((ptrForNodeNum2 = getPtrForNumberWithConstructing(pf, num2)) == NULL)
         return false;
 
-    /// Ustawiamy nowe przekierowanie czyli podpinamy pod node'a 1 nowy napis i wstawiamy się do listy node'a 2.
+    // Ustawiamy nowe przekierowanie czyli podpinamy pod node'a 1 nowy napis i wstawiamy się do listy node'a 2.
 
-    int num1Length = (int)strlen(num1), num2Length = (int)strlen(num2);
+    size_t num1Length = strlen(num1), num2Length = strlen(num2);
     char *forward;
     if ((forward = (char*)malloc(sizeof(char) * (num2Length + 1))) == NULL)
         return false;
@@ -239,26 +242,26 @@ void removeNodes(PhoneForward *node)
     if (!node)
         return;
 
-    /// Usuwamy rekurencyjnie poddrzewa dzieci node'a.
+    // Usuwamy rekurencyjnie poddrzewa dzieci node'a.
 
     for (int i = 0; i < 10; i++)
         if (node->nextDigit[i] != NULL)
             removeNodes(node->nextDigit[i]);
 
-    /// Usuwamy przekierowanie i czyścimy ewentualnie powstałe
-    /// niepotrzebne node'y na gałezi z poprzednim przekierowaniem.
+    // Usuwamy przekierowanie i czyścimy ewentualnie powstałe
+    // niepotrzebne node'y na gałezi z poprzednim przekierowaniem.
 
-    if (node->forward != NULL) //TODO: to się potarza też w add.
+    if (node->forward != NULL)
     {
         free(node->forward);
         node->forward = NULL;
         deleteFromCDList(node->placeInForwardList);
         node->placeInForwardList = NULL;
-        removeUnnecessaryNodesUnlessNode(node->fwdNode, node);
+        removeUnnecessaryNodes(node->fwdNode, node);
         node->fwdNode = NULL;
     }
 
-    /// Sprawdzamy czy node ma jakieś dzieci lub coś jest na niego przekierowane.
+    // Sprawdzamy czy node ma jakieś dzieci lub coś jest na niego przekierowane.
 
     bool hasAnyChildren = false;
     for (int i = 0; i < 10 && !hasAnyChildren; i++)
@@ -269,8 +272,8 @@ void removeNodes(PhoneForward *node)
     if (!cdListIsEmpty(node->listOfFwdToThisNum))
         return;
 
-    /// Jeżeli nie ma dzieci i nic nie jest na niego przekierowane (przekierowania też już nie ma)
-    /// i o ile nie jest korzeniem to go usuwamy.
+    // Jeżeli nie ma dzieci i nic nie jest na niego przekierowane (przekierowania też już nie ma)
+    // i o ile nie jest korzeniem to go usuwamy.
 
     if (node->father != NULL)
     {
@@ -283,12 +286,12 @@ void removeNodes(PhoneForward *node)
 
 void phfwdRemove(PhoneForward *pf, char const *num)
 {
-    /// Jeżeli napis nie jest numerem, nie robimy nic.
+    // Jeżeli napis nie jest numerem, nie robimy nic.
 
     if (!hasOnlyDigits(num))
         return;
 
-    /// Próbujemy znaleźć node odpowiadajacy numerowi @p num.
+    // Próbujemy znaleźć node odpowiadajacy numerowi @p num.
 
     PhoneForward *ptrForNum = pf;
     int i = 0, idx = 0;
@@ -298,7 +301,7 @@ void phfwdRemove(PhoneForward *pf, char const *num)
         ptrForNum = ptrForNum->nextDigit[idx];
     }
 
-    /// Jeżeli taki node istnieje, usuwamy rekurencyjnie jego poddrzewo.
+    // Jeżeli taki node istnieje, usuwamy rekurencyjnie jego poddrzewo.
 
     if (ptrForNum)
         removeNodes(ptrForNum);
@@ -311,9 +314,9 @@ void phfwdRemove(PhoneForward *pf, char const *num)
  * @param[in] size - pojemność struktury.
  * @return wskaźnik na strukturę lub NULL gdy nie udało się zaalokować pamięci.
  */
-static PhoneNumbers* initPhoneNumbers(int size)
+static PhoneNumbers* initPhoneNumbers(size_t size)
 {
-    /// Jeśli nie uda się zaalokować pamięci zwracamy NULL.
+    // Jeśli nie uda się zaalokować pamięci zwracamy NULL.
 
     PhoneNumbers *pn;
     if ((pn = (PhoneNumbers*)malloc(sizeof(PhoneNumbers))) == NULL)
@@ -321,7 +324,7 @@ static PhoneNumbers* initPhoneNumbers(int size)
     if ((pn->arrOfPN = (char**)malloc(sizeof(char*) * size)) == NULL)
         return NULL;
 
-    /// Jeśli wszystko się uda ustawiamy rozmiar tablicy i zwracamy strukturę.
+    // Jeśli wszystko się uda ustawiamy rozmiar tablicy i zwracamy strukturę.
 
     pn->numOfPN = size;
     return pn;
@@ -334,20 +337,20 @@ static PhoneNumbers* initPhoneNumbers(int size)
  * @param[in] idx - indeks miejsca w strukturze.
  * @return TRUE jeśli udało się dodać numer, wpp FALSE.
  */
-static bool addToPhoneNumbers(PhoneNumbers *pn, char const *string, int idx)
+static bool addToPhoneNumbers(PhoneNumbers *pn, char const *string, size_t idx)
 {
-    /// Jeśli nie uda się zaalować pamięci lub @p idx wykracza
-    /// poza rozmiar tablicy zwracamy false.
+    // Jeśli nie uda się zaalować pamięci lub @p idx wykracza
+    // poza rozmiar tablicy zwracamy false.
 
     char *foo;
     if (!string)
         return false;
-    if (idx >= pn->numOfPN || idx < 0)
+    if (idx >= pn->numOfPN)
         return false;
     if ((foo = (char*)malloc(sizeof(char) * (strlen(string)) + 1)) == NULL)
         return false;
 
-    /// Kopiujemy napis i dodajemy go do tablicy.
+    // Kopiujemy napis i dodajemy go do tablicy.
 
     strcpy(foo, string);
     pn->arrOfPN[idx] = foo;
@@ -363,17 +366,17 @@ static bool addToPhoneNumbers(PhoneNumbers *pn, char const *string, int idx)
  * @param[in] string2Ind - indeks od którego ma być przepisany @p string2 (włącznie).
  * @return wkaźnik na napis , albo NULL jeśli nie udało się zaalokować pamięci.
  */
-static char* mergeStrings(char *string1, char const *string2, int string2Ind) // TODO: spróbować zrobić to funkcjami ze string.h
+static char* mergeStrings(char *string1, char const *string2, int string2Ind)
 {
-    /// Dobieramy odpowiednią długość tablicy i próbujemy ją zaalokować.
+    // Dobieramy odpowiednią długość tablicy i próbujemy ją zaalokować.
 
     char *toReturn;
     int i = 0, j = string2Ind;
-    int stringLength = (int)(strlen(string1) + strlen(string2) - string2Ind + 1);   //TODO rozważyc size_t
+    int stringLength = (int)(strlen(string1) + strlen(string2) - string2Ind + 1);
     if ((toReturn = (char*)malloc(sizeof(char) * stringLength)) == NULL)
         return NULL;
 
-    /// Przepisujemy pierwsze słowo.
+    // Przepisujemy pierwsze słowo.
 
     while (string1[i] != '\0')
     {
@@ -381,7 +384,7 @@ static char* mergeStrings(char *string1, char const *string2, int string2Ind) //
         i++;
     }
 
-    /// Przepisujemy drugie słowo.
+    // Przepisujemy drugie słowo.
 
     while (string2[j] != '\0')
     {
@@ -390,7 +393,7 @@ static char* mergeStrings(char *string1, char const *string2, int string2Ind) //
         j++;
     }
 
-    /// Ustawiamy ostatni znak i zwracamy.
+    // Ustawiamy ostatni znak i zwracamy.
 
     toReturn[i] = '\0';
     return toReturn;
@@ -398,7 +401,7 @@ static char* mergeStrings(char *string1, char const *string2, int string2Ind) //
 
 PhoneNumbers const* phfwdGet(PhoneForward *pf, char const *num)
 {
-    /// Obsługujemy przypadki gdy @p num nie reprezentuje niepustego numeru.
+    // Obsługujemy przypadki gdy @p num nie reprezentuje niepustego numeru.
 
     PhoneNumbers *pn = initPhoneNumbers(1);
     if (!pn)
@@ -409,7 +412,7 @@ PhoneNumbers const* phfwdGet(PhoneForward *pf, char const *num)
         return pn;
     }
 
-    /// Szukamy najdłuższego pasującego do @p num prefiksu, który ma przekierowanie.
+    // Szukamy najdłuższego pasującego do @p num prefiksu, który ma przekierowanie.
 
     int i = 0, ind = 0, biggestInd = 0;
     ind = charToInt(num[0]);
@@ -429,11 +432,11 @@ PhoneNumbers const* phfwdGet(PhoneForward *pf, char const *num)
     }
 
 
-    if (biggestPrefix == NULL)    /// Jeśli nie znaleziono takiego prefiksu dodajemy do struktury @p num.
+    if (biggestPrefix == NULL)    // Jeśli nie znaleziono takiego prefiksu dodajemy do struktury @p num.
     {
         addToPhoneNumbers(pn, num, 0);
     }
-    else    /// Jeśli udało się znaleźć, łączymy przekierowany prefiks z resztą numeru i dodajemy do struktury,
+    else    // Jeśli udało się znaleźć, łączymy przekierowany prefiks z resztą numeru i dodajemy do struktury,
     {
         char *toAdd = mergeStrings(biggestPrefix->forward, num, biggestInd);
         addToPhoneNumbers(pn, toAdd, 0);
@@ -451,9 +454,9 @@ PhoneNumbers const* phfwdGet(PhoneForward *pf, char const *num)
  * @param[in] arr - wksaźnik na tablicę napisów;
  * @param[in] arrInd - indeks ostatniego napisu, który ma być usunięty
  */
-static void freeCharArr(char **arr, int arrInd)
+static void freeCharArr(char **arr, size_t arrInd)
 {
-    for (int i = 0; i <= arrInd; i++)
+    for (size_t i = 0; i <= arrInd; i++)
         free(arr[i]);
 
     free(arr);
@@ -480,20 +483,20 @@ static int compareFunction(const void* name1, const void* name2)
  * @param[in,out] newArrLength - wskaźnik na miejsce w którym zostanie zapisana długość zwracanj tablicy.
  * @return wskaźnik na tablicę bez duplikatów lub NULL jeśli nie udało się zaalokować pamięci.
  */
-static char** removeDuplicatsFromCharArr(char **arr, int arrLength, int *newArrLength)
+static char** removeDuplicatsFromCharArr(char **arr, size_t arrLength, size_t *newArrLength)
 {
-    /// Jeśli tablica będzie odpowiednio krótka, nie będzie w niej duplikatów.
+    // Jeśli tablica będzie odpowiednio krótka, nie będzie w niej duplikatów.
 
     (*newArrLength) = arrLength;
     if (arrLength <= 1)
         return arr;
 
-    /// Przechodząc przez tablicę @p arr usuwamy sąsiadujące duplikaty.
-    /// Jeśli usuwamy jakiś napis, zwalniamy go, a pozostałe po nim pole
-    /// w tablicy ustawiamy na NULL.
+    // Przechodząc przez tablicę @p arr usuwamy sąsiadujące duplikaty.
+    // Jeśli usuwamy jakiś napis, zwalniamy go, a pozostałe po nim pole
+    // w tablicy ustawiamy na NULL.
 
-    int numOnTheRightInd, numOfRemovedStrings = 0;
-    for (int numOnTheLeftInd = 0; numOnTheLeftInd < arrLength;)
+    size_t numOnTheRightInd, numOfRemovedStrings = 0;
+    for (size_t numOnTheLeftInd = 0; numOnTheLeftInd < arrLength;)
     {
         numOnTheRightInd = numOnTheLeftInd + 1;
         while (numOnTheRightInd < arrLength && strcmp(arr[numOnTheLeftInd], arr[numOnTheRightInd]) == 0 )
@@ -506,34 +509,34 @@ static char** removeDuplicatsFromCharArr(char **arr, int arrLength, int *newArrL
         numOnTheLeftInd = numOnTheRightInd;
     }
 
-    /// Jeśli niczego nie usunęliśmy to możemy zwrócić oryginalną tablicę.
+    // Jeśli niczego nie usunęliśmy to możemy zwrócić oryginalną tablicę.
 
     if (numOfRemovedStrings == 0)
         return arr;
 
-    /// Allokujemy nowa tablicę.
+    // Allokujemy nowa tablicę.
 
     char **toReturn;
     int toReturnArrInd = 0;
     if ((toReturn = (char**)malloc(sizeof(char*) * (arrLength - numOfRemovedStrings))) == NULL)
         return NULL;
 
-    /// Przepisujemy starą tablicę do nowej.
+    // Przepisujemy starą tablicę do nowej.
 
-    for (int i = 0; i < arrLength; i++)
+    for (size_t i = 0; i < arrLength; i++)
         if (arr[i] != NULL)
             toReturn[toReturnArrInd++] = arr[i];
 
-    /// Usuwamy starą tablicę, ustawiamy długość nowej.
+    // Usuwamy starą tablicę, ustawiamy długość nowej.
 
     free(arr);
     (*newArrLength) = arrLength - numOfRemovedStrings;
     return toReturn;
 }
 
-PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num) // TODO: spróbować podzielić na podfunkcje.
+PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num)
 {
-    /// Obsługujemy przypadek, gdy @p num nie reprezentuje numeru.
+    // Obsługujemy przypadek, gdy @p num nie reprezentuje numeru.
 
     if (!hasOnlyDigits(num))
     {
@@ -544,10 +547,11 @@ PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num) // TODO: spr
         return pn;
     }
 
-    /// Liczymy wymaganą długość tablicy jako sumę długości wszystkich list na ścieżce
-    /// od korzenia do node'a odpowiadającego numerowi @p num.
+    // Liczymy wymaganą długość tablicy jako sumę długości wszystkich list na ścieżce
+    // od korzenia do node'a odpowiadającego numerowi @p num.
 
-    int ind = 0, i = 0, maxArrLength = 0;
+    int ind = 0, i = 0;
+    size_t maxArrLength = 0;
     PhoneForward *currentNode = pf;
     while (num[i] != '\0' && currentNode != NULL)
     {
@@ -556,20 +560,20 @@ PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num) // TODO: spr
         if (currentNode != NULL)
             maxArrLength += getCDListLength(currentNode->listOfFwdToThisNum);
     }
-    maxArrLength++;     /// Należy pamiętać o tym, że dodajemy też sam numer @p num.
+    maxArrLength++;     // Należy pamiętać o tym, że dodajemy też sam numer @p num.
 
-    /// Allokujemy tablicę.
+    // Allokujemy tablicę.
 
     CDList *currentCDList, *currentGuard;
-    int arrInd = 0;
+    size_t arrInd = 0;
     i = 0;
     currentNode = pf;
     char **currentArray;
     if ((currentArray = (char**)malloc(sizeof(char*) * maxArrLength)) == NULL)
         return NULL;
 
-    /// Dla każdego node'a przepisujemy każdy napis z listy powiększony o sufiks,
-    /// który dzieli tego node'a z node'em odpowiadającym numerowi @p num (nawet jeśl taki fizycznie nie istnieje).
+    // Dla każdego node'a przepisujemy każdy napis z listy powiększony o sufiks,
+    // który dzieli tego node'a z node'em odpowiadającym numerowi @p num (nawet jeśl taki fizycznie nie istnieje).
 
     while (num[i] != '\0' && currentNode != NULL)
     {
@@ -583,7 +587,8 @@ PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num) // TODO: spr
             {
                 if ((currentArray[arrInd] = mergeStrings(currentCDList->num, num, i)) == NULL)
                 {
-                    freeCharArr(currentArray, arrInd - 1);
+                    if (arrInd >= 1)
+                        freeCharArr(currentArray, arrInd - 1);
                     return NULL;
                 }
                 arrInd++;
@@ -592,32 +597,34 @@ PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num) // TODO: spr
         }
     }
 
-    /// Dodajemy jeszcze sam numer @p num.
+    // Dodajemy jeszcze sam numer @p num.
 
     char *copyOfNum;
     if ((copyOfNum = (char*)malloc(sizeof(char) * (strlen(num) + 1))) == NULL)
     {
-        freeCharArr(currentArray, maxArrLength - 2);
+        if (maxArrLength >= 1)
+            freeCharArr(currentArray, maxArrLength - 1);
         return NULL;
     }
     strcpy(copyOfNum, num);
     currentArray[maxArrLength - 1] = copyOfNum;
 
-    /// Sortujemy.
+    // Sortujemy.
 
-    qsort(currentArray, (size_t)maxArrLength, sizeof(char*), compareFunction);
+    qsort(currentArray, maxArrLength, sizeof(char*), compareFunction);
 
-    /// Usuwamy duplikaty.
+    // Usuwamy duplikaty.
 
     char **foo;
-    int newArrLength = 0;
+    size_t newArrLength = 0;
     if ((foo = removeDuplicatsFromCharArr(currentArray, maxArrLength, &newArrLength)) == NULL)
     {
-        freeCharArr(currentArray, maxArrLength - 1);
+        if (maxArrLength >= 1)
+            freeCharArr(currentArray, (size_t)(maxArrLength - 1));
         return NULL;
     }
 
-    /// Allokujemy strukturę i zwracamy ją.
+    // Allokujemy strukturę i zwracamy ją.
 
     PhoneNumbers *pn = (PhoneNumbers*)malloc(sizeof(PhoneNumbers));
     if (!pn)
@@ -632,10 +639,11 @@ PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num) // TODO: spr
 
 char const* phnumGet(PhoneNumbers const *pnum, size_t idx)
 {
-    /// Jeżeli struktura jest NULL'em lub indeks @p idx jest nieodpowiedni zwracamy NULL.
+    // Jeżeli struktura jest NULL'em lub indeks @p idx jest nieodpowiedni zwracamy NULL.
+
     if (!pnum)
         return NULL;
-    if (idx >= (size_t)pnum->numOfPN)
+    if (idx >= pnum->numOfPN)
         return NULL;
 
     return pnum->arrOfPN[idx];

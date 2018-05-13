@@ -23,7 +23,7 @@ extern CDList* initCDList()
     return toReturn;
 }
 
-extern CDList* addToCDList(CDList *list, char const *toAdd, int toAddLength)
+extern CDList* addToCDList(CDList *list, char const *toAdd, size_t toAddLength)
 {
     CDList* newNode = malloc(sizeof(CDList));
     if (!newNode || !toAdd)
