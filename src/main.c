@@ -17,17 +17,173 @@
 //
 //int main()
 //{
-//    PhoneForward *pf = phfwdNew();
+//    printf("CUSTOM BAD CASES\n");
+//    PhoneForward * pf = phfwdNew();
+//    PhoneNumbers const *pnum;
+//
+//    pnum = phfwdGet(pf, "$$$%");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, " 1");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "pro");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "1223333O2");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "^");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "1 + 2");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "1+2");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, " ");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "555-");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "+22");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "-2");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "00000 2");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, " 2");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "2)");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "]");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "1!");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "\n");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdGet(pf, "13212312\n");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdReverse(pf, "]");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdReverse(pf, "13123312\n");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdReverse(pf, "12 ");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdReverse(pf, " 12");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdReverse(pf, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdReverse(pf, "112313132132312132%");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdReverse(pf, "12331213213200000O31230013");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
+//
+//    pnum = phfwdReverse(pf, "'''<");
+//    if (phnumGet(pnum, 0) == NULL) printf("GOOD\n");
+//    else printf("%s\n", phnumGet(pnum, 0));
+//    phnumDelete(pnum);
 //
 //
-//    phfwdAdd(pf, "3", "44");
-//    phfwdAdd(pf, "3", "444");
-//    phfwdAdd(pf, "3", "4444");
-//    phfwdAdd(pf, "3", "4");
-//    phfwdRemove(pf, "444");
-//    phfwdAdd(pf, "3", "444");
-//    phfwdAdd(pf, "3", "444");
-//    rev(pf, "44444");
+//    assert(phfwdAdd(pf, "13212", "23322O") == false);
+//    assert(phfwdAdd(pf, "1326^12", "23322O") == false);
+//    assert(phfwdAdd(pf, "13212", "") == false);
+//    assert(phfwdAdd(pf, "", "23322O") == false);
+//    assert(phfwdAdd(pf, "13 ", "2332 2") == false);
+//    assert(phfwdAdd(pf, "13212", "2332m2") == false);
+//    assert(phfwdAdd(pf, "       ", "23322") == false);
+//    assert(phfwdAdd(pf, "13\n&", "23322") == false);
+//    assert(phfwdAdd(pf, "12", "12") == false);
+//    assert(phfwdAdd(pf, "12", "133") == true);
+//    assert(phfwdAdd(pf, "13", "12") == true);
+//    assert(phfwdAdd(pf, "1", "12") == true);
+//
+//    phfwdRemove(pf, "1323132 ");
+//    phfwdRemove(pf, "1 ");
+//    phfwdRemove(pf, " 1");
+//    phfwdRemove(pf, "1\n3");
+//    phfwdRemove(pf, "%%$#$#$%$");
+//    phfwdRemove(pf, "Lorem Ipsum");
+//    phfwdRemove(pf, "1|");
+//    phfwdRemove(pf, "13");
+//
+//    pnum = phfwdGet(pf, "12");
+//    if (phnumGet(pnum, 0) != NULL) printf("GOOD\n");
+//    else printf("BAD");
+//    phnumDelete(pnum);
+//
 //    phfwdDelete(pf);
 //
 //    return 0;
