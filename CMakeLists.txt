@@ -27,7 +27,9 @@ set(SOURCE_FILES
     src/easyString.h
     src/phone_forward_example.c
     src/cyclicDoubleList.c
-    src/cyclicDoubleList.h)
+    src/cyclicDoubleList.h
+    src/phone_forward_interface.h
+    src/phone_forward_interface.c)
 
 # Wskazujemy plik wykonywalny.
 add_executable(phone_forward ${SOURCE_FILES})
