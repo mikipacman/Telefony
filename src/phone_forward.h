@@ -132,4 +132,10 @@ static inline void phnumDelete(PhoneNumbers const *pnum)
  */
 char const* phnumGet(PhoneNumbers const *pnum, size_t idx);
 
+/** @brief Wyświetla numery.
+ * Wyświetla wszystkie numery znajdujące się w strukturze @p pnum.
+ * @param pnum - wskaźnik na strukturę @p PhoneNumbers.
+ */
+void phnumPrint(PhoneNumbers const *pnum);
+
 #endif /* __PHONE_FORWARD_H__ */

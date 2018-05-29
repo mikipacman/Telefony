@@ -29,7 +29,9 @@ set(SOURCE_FILES
     src/cyclicDoubleList.c
     src/cyclicDoubleList.h
     src/phone_forward_interface.h
-    src/phone_forward_interface.c)
+    src/phone_forward_interface.c
+    src/phone_forward_base_list.h
+    src/phone_forward_base_list.c)
 
 # Wskazujemy plik wykonywalny.
 add_executable(phone_forward ${SOURCE_FILES})

@@ -44,9 +44,6 @@ PhoneForward* phfwdNew(void)
 
 void phfwdDelete(PhoneForward *pf)
 {
-    if (!pf)
-        return;
-
     // Zwalniamy atrybuty node'a.
 
     free(pf->forward);
@@ -647,4 +644,12 @@ char const* phnumGet(PhoneNumbers const *pnum, size_t idx)
         return NULL;
 
     return pnum->arrOfPN[idx];
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void phnumPrint(PhoneNumbers const *pnum)
+{
+    for (size_t i = 0; i < pnum->numOfPN; i++)
+        printf("%s\n", phnumGet(pnum, i));
 }

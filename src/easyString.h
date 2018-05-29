@@ -23,4 +23,16 @@ extern bool hasOnlyDigits(char const *string);
  */
 extern int charToInt(char c);
 
+// TODO: dokumentacja funkcji poniżej.
+
+extern bool isDigit(int c);
+
+extern bool isLetter(int c);
+
+extern bool isEOF(int c);
+
+extern bool isWhiteSpace(int c);
+
+extern bool isComment(int c);
+
 #endif //__EASY_STRING_H__
