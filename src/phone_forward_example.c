@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "phone_forward_interface.h"
@@ -6,34 +5,27 @@
 int main()
 {
     PhoneForwardsCenter *phoneForwardsCenter = initPhoneForwardsCenter();
-    Instruction instruction;
-    PerformResult performResult;
-    bool isEOF;
-
     if (!phoneForwardsCenter)
         return 1;
 
-    atExitCleanPFC(phoneForwardsCenter);
+    Instruction *instruction = initInstruction();
+    if (!instruction)
+        return 1;
+
+    bool isNotEOF;
+
+    atExitClean(phoneForwardsCenter, instruction);
 
     do
     {
-            instruction = getInstruction();
-            isEOF = instructionIsEndOfFile(instruction);
+        isNotEOF = getInstruction(instruction);
+        if (isNotEOF)
+            performInstruction(instruction, phoneForwardsCenter);
 
-            if (instructionIsError(instruction))
-                throwError(getErrorFromInstruction(instruction));
+        clearInstruction(instruction);
+    } while (isNotEOF);
 
-            if (!isEOF)
-            {
-                performResult = performInstruction(instruction, phoneForwardsCenter);
-
-                if (performResultIsError(performResult))
-                    throwError(getErrorFromPerormResult(performResult));
-            }
-            deleteInstruction(instruction);
-
-    } while (!isEOF);
-
+    getInstruction(instruction);
 
     return 0;
 }

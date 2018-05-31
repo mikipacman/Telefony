@@ -48,7 +48,7 @@ PhoneForward* phfwdNew(void);
 /** @brief Usuwa strukturę.
  * Usuwa strukturę wskazywaną przez @p pf. Nic nie robi, jeśli wskaźnik ten ma
  * wartość NULL.
- * @param[in] pf – wskaźnik na usuwaną strukturę.
+ * @param[in,out] pf – wskaźnik na usuwaną strukturę.
  */
 void phfwdDelete(PhoneForward *pf);
 
@@ -57,7 +57,7 @@ void phfwdDelete(PhoneForward *pf);
  * w których ten prefiks zamieniono odpowiednio na prefiks @p num2. Każdy numer
  * jest swoim własnym prefiksem. Jeśli wcześniej zostało dodane przekierowanie
  * z takim samym parametrem @p num1, to jest ono zastępowane.
- * @param[in] pf   – wskaźnik na strukturę przechowującą przekierowania numerów;
+ * @param[in,out] pf   – wskaźnik na strukturę przechowującą przekierowania numerów;
  * @param[in] num1 – wskaźnik na napis reprezentujący prefiks numerów
  *                   przekierowywanych;
  * @param[in] num2 – wskaźnik na napis reprezentujący prefiks numerów, na które
@@ -74,7 +74,7 @@ bool phfwdAdd(PhoneForward *pf, char const *num1, char const *num2);
  * parametru @p num1 użytego przy dodawaniu. Jeśli nie ma takich przekierowań
  * lub napis nie reprezentuje numeru, nic nie robi.
  *
- * @param[in] pf  – wskaźnik na strukturę przechowującą przekierowania numerów;
+ * @param[in,out] pf  – wskaźnik na strukturę przechowującą przekierowania numerów;
  * @param[in] num – wskaźnik na napis reprezentujący prefiks numerów.
  */
 void phfwdRemove(PhoneForward *pf, char const *num);
@@ -108,7 +108,7 @@ PhoneNumbers const* phfwdReverse(PhoneForward *pf, char const *num);
 /** @brief Usuwa strukturę.
  * Usuwa strukturę wskazywaną przez @p pnum. Nic nie robi, jeśli wskaźnik ten ma
  * wartość NULL.
- * @param[in] pnum – wskaźnik na usuwaną strukturę.
+ * @param[in,out] pnum – wskaźnik na usuwaną strukturę.
  */
 static inline void phnumDelete(PhoneNumbers const *pnum)
 {
@@ -134,7 +134,7 @@ char const* phnumGet(PhoneNumbers const *pnum, size_t idx);
 
 /** @brief Wyświetla numery.
  * Wyświetla wszystkie numery znajdujące się w strukturze @p pnum.
- * @param pnum - wskaźnik na strukturę @p PhoneNumbers.
+ * @param[in] pnum - wskaźnik na strukturę @p PhoneNumbers.
  */
 void phnumPrint(PhoneNumbers const *pnum);
 
