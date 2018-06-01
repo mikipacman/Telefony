@@ -1,3 +1,12 @@
+/** @file
+ * Implementacja klasy obsługującej listę zawierającą bazy przekierowań telefonicznych.
+ * Lista jest cyklicza, dwukierunkowa i posiada strażnika (na jej początku), który
+ * jest rozpoznawany po tym, że jego nazwa to "$". Lista jest posortowana leksykograficznie
+ * wzgledem napisów w polach @p id.
+ *
+ * @author Mikołaj Pacek <miki.pacman@gmail.com>
+ */
+
 #include "phone_forward_base_list.h"
 #include <string.h>
 #include <stdbool.h>
@@ -23,6 +32,7 @@ extern PFBList* initPFBList()
     return pfbList;
 }
 
+/// Usuwa pojedynczego node'a z listy.
 static void deleteNodeFromPFBList(PFBList *pfbList)
 {
     free(pfbList->id);
@@ -71,7 +81,7 @@ extern void deletePFBList(PFBList *pfbList)
     free(pfbList);
 }
 
-/// Spradza czy jest strażnikiem.
+/// Sprawdza czy jest strażnikiem.
 static bool isGuard(PFBList *pfbList)
 {
     return strcmp(pfbList->id, "$") == 0;
@@ -116,16 +126,4 @@ extern PFBList* addToPFBList(PFBList *pfbList, char *id)
     new->prev = current;
 
     return new;
-}
-
-extern void printPFBList(PFBList *pfbList)
-{
-    PFBList *temp = pfbList;
-    printf("%s\n", pfbList->id);
-    pfbList = pfbList->next;
-    while (temp != pfbList)
-    {
-        printf("%s\n", pfbList->id);
-        pfbList = pfbList->next;
-    }
 }

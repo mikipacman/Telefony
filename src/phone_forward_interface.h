@@ -87,8 +87,8 @@ typedef struct
  */
 typedef struct
 {
-    PFBList *baseList;
-    PFBList *currentBase;
+    PFBList *baseList;      ///< Wskaźnik na strażnika listy wszystkich baz przekierowań.
+    PFBList *currentBase;   ///< Wskaźnik na node'a bierzącej bazy przekierowań.
 }PhoneForwardsCenter;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ extern void deletePhoneForwardCenter(PhoneForwardsCenter *phoneForwardsCenter);
  */
 extern Instruction* initInstruction();
 
-/** @biref Usuwa całą instrukcję.
+/** @brief Usuwa całą instrukcję.
  * @param instruction - wskaźnik na instrukcję.
  */
 extern void deleteInstruction(Instruction *instruction);

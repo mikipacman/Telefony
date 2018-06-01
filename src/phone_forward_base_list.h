@@ -20,10 +20,10 @@
  */
 typedef struct PFBList
 {
-    PhoneForward *pfBase;
-    char *id;
-    struct PFBList *next;
-    struct PFBList *prev;
+    PhoneForward *pfBase;   ///< Wskaźnik na bazę przekierowań.
+    char *id;               ///< Wskaźnik na napis reprezentujący identyfikator.
+    struct PFBList *next;   ///< Wskaźnik na następny element listy.
+    struct PFBList *prev;   ///< Wskaźnik na poprzedni element listy.
 }PFBList;
 
 
@@ -37,7 +37,8 @@ extern PFBList* initPFBList();
 
 /** @brief Usuwa z listy element.
  * Usuwa z listy element o ile nie jest on strażnikiem. W przypadku, gdy
- * @p pfbList jest strażnikiem lub NULL'em nie robi nic. daje true jesli udało się usunąć. false wpp.
+ * @p pfbList jest strażnikiem lub NULL'em nie robi nic.
+ * @return TRUE jesli udało się usunąć, wpp FALSE.
  */
 extern bool deleteFromPFBList(PFBList *pfbList, char *id);
 
@@ -58,7 +59,5 @@ extern void deletePFBList(PFBList *pfbList);
  * @return wskaźnik na nowy node w lisćie lub NULL.
  */
 extern PFBList* addToPFBList(PFBList *pfbList, char *id);
-
-extern void  printPFBList(PFBList* pfbList);
 
 #endif //__PHONE_FORWARD_BASE_LIST_H__
