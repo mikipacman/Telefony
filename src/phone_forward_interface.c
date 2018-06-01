@@ -522,12 +522,16 @@ extern void performInstruction(Instruction *ins, PhoneForwardsCenter *pfc)
         {
             case ADD_PHFWD:
                 throwError(ARROW_ERROR, ins->posOfOperator);
+                break;
             case DEL_PHFWD:
                 throwError(DEL_ERROR, ins->posOfOperator);
+                break;
             case GET_PHFWD:
                 throwError(Q_MARK_ERROR, ins->posOfOperator);
+                break;
             case REVERSE_PHFWD:
                 throwError(Q_MARK_ERROR, ins->posOfOperator);
+                break;
             default:
                 break;
         }
