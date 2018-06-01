@@ -23,16 +23,37 @@ extern bool hasOnlyDigits(char const *string);
  */
 extern int charToInt(char c);
 
-// TODO: dokumentacja funkcji poniżej.
-
+/** @brief Sprawdza czy znak jest cyfrą.
+ * @param c - numer znaku
+ * @return TRUE jeśli jest, wpp FALSE.
+ */
 extern bool isDigit(int c);
 
+/** @brief Sprawdza czy znak jest literą.
+ * @param c - numer znaku
+ * @return TRUE jeśli jest, wpp FALSE.
+ */
 extern bool isLetter(int c);
 
+/** @brief Sprawdza czy znak jest znakiem końca pliku.
+ * @param c - numer znaku
+ * @return TRUE jeśli jest, wpp FALSE.
+ */
 extern bool isEOF(int c);
 
+/** @brief Sprawdza czy znak jest białym znakiem.
+ * @param c - numer znaku
+ * @return TRUE jeśli jest, wpp FALSE.
+ */
 extern bool isWhiteSpace(int c);
 
+
+/** @brief Sprawdza czy znak jest komentarzem.
+ * Jeśli znak jest '$' i znak sczytany ze standardowego wejścia też zwraca TRUE.
+ * Jeśli ten drugi nie jest '$' to jest on zwracany na standardowe wejście.
+ * @param c - numer znaku
+ * @return TRUE jeśli jest, wpp FALSE.
+ */
 extern bool isComment(int c);
 
 #endif //__EASY_STRING_H__

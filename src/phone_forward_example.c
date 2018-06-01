@@ -25,7 +25,5 @@ int main()
         clearInstruction(instruction);
     } while (isNotEOF);
 
-    getInstruction(instruction);
-
     return 0;
 }

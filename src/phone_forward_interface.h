@@ -105,25 +105,31 @@ extern PhoneForwardsCenter* initPhoneForwardsCenter();
  */
 extern void deletePhoneForwardCenter(PhoneForwardsCenter *phoneForwardsCenter);
 
+/** @brief Tworzy pustą instrukcję.
+ * @return wskaźnik na instrukcję.
+ */
 extern Instruction* initInstruction();
 
+/** @biref Usuwa całą instrukcję.
+ * @param instruction - wskaźnik na instrukcję.
+ */
 extern void deleteInstruction(Instruction *instruction);
 
 /** @brief Pobiera instrukcję.
  * O ile to możliwe sczytuje ze standardowego wejścia instrukcję
  * i zwraca ją. Jeśli nie jest możliwe prawidłowe sczytanie
- * instrukcji przez błędy składniowe lub koniec pliku, odpowiednio
- * kończy działanie programu wydając odpowiedni komunikat na standardowe
- * wyjście diagnostyczne lub zwraca instrukcję typu END_OF_FILE.
- * @return instrukcja, którą można wykonać funkcją @p performInstruction lub
- * sprawdzić funkcją @p instructionIsEndOfFile czy plik się skończył.
- *
- * false = eof.
+ * instrukcji przez błędy składniowe, wypisuje odpowiedni komunikat
+ * na standardowe wyjście diagnostyczne i kończy działanie programu.
+ * @param[in, out] instruction - wskaźnik na instrukcję, na którą
+ * zostaną zapisane informacje.
+ * @return TRUE jeśli poprawnie sczytano instrukcję, FALSE jeśli nie ma już
+ * instrukcji do sczytania czyli wystąpił EOF.
  */
 extern bool getInstruction(Instruction *instruction);
 
 /** @brief Usuwa instrukcję.
- * Usuwa z instrukcji wszystkie zaalokowane napisy.
+ * Usuwa z instrukcji wszystkie zaalokowane napisy, ale nie
+ * samą instrukcję.
  * @param[in] instruction - instrukcja do wyczyszczenia.
  */
 extern void clearInstruction(Instruction *instruction);
@@ -135,16 +141,11 @@ extern void clearInstruction(Instruction *instruction);
  */
 extern void performInstruction(Instruction *instruction, PhoneForwardsCenter *phoneForwardsCenter);
 
-/** @brief Sprawdza czy instrukcja informuje o końcu pliku.
- * @param[in] instruction - instrukcja.
- * @return TRUE jeśli instrukcja jest typu END_OF_FILE, wpp FALSE.
- */
-extern bool instructionIsEndOfFile(Instruction *instruction);
-
-/** @brief Dodaje centrum baz przekierowań do @p atexit.
- * Dodaje centrum baz przekierowań do listy struktur, które zostaną automatycznie
+/** @brief Dodaje centrum baz przekierowań i instrukcję do @p atexit.
+ * Dodaje centrum baz przekierowań i instrukcję do listy struktur, które zostaną automatycznie
  * usunięte przy zakończeniu programu.
- * @param[in] pfc - wskaźnik na centrum baz przekierowań
+ * @param[in] pfc - wskaźnik na centrum baz przekierowań;
+ * @param[in] ins - wskaźnik na instrukcję.
  */
 extern void atExitClean(PhoneForwardsCenter *pfc, Instruction *ins);
 

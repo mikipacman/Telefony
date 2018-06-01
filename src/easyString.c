@@ -47,7 +47,7 @@ extern bool isEOF(int c)
 
 extern  bool isWhiteSpace(int c)
 {
-    return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r';// TODO: dodać więcej znaków.
+    return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r';
 }
 
 extern bool isComment(int c)

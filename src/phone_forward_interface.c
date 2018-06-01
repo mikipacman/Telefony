@@ -20,7 +20,7 @@ typedef enum {NEW, DEL, ARROW, Q_MARK, ID, NUM, INVALID_TOKEN, EOF_TOKEN} TokenT
 typedef enum {GET_CURRENT_POS, GET_LAST_TOKEN_POS, SET_CURRENT_POS_TO,
                                         SET_LAST_TOKEN_POS_TO, INCREASE} BitCounterCommand;
 
-/** @biref Licznik sczytanych bitów.
+/** @brief Licznik sczytanych bitów.
  * Funkcja zawiera dwie zmienne statyczne przechowujące informacje o numerze pierwszego
  * bitu ostatnio sczytanego tokena i o numerze bitu ostatnio sczytanego znaku.
  * Za pomocą komend @p BitCounterCommand można odpowiednio modyfikować i otrzymywać
@@ -119,7 +119,6 @@ extern void deleteInstruction(Instruction *instruction)
  */
 static void throwError(ErrorType errorType, size_t charNum)
 {
-
     switch (errorType)
     {
         case SYNTACTIC_ERROR:
@@ -142,7 +141,13 @@ static void throwError(ErrorType errorType, size_t charNum)
         default:
             break;
     }
-    getchar(); // *wyjaśnic po co to XD
+    getchar();  // Ten getchar wygląda na niepotrzebny, jednak jest on po to, aby w skrajnym przypadku, kiedy w momencie
+                // kiedy strumień wejścia jest pusty, a my wrzucimy na niego ungetc'em jakiś znak, a następnie go
+                // sczytamy (takie sytuacje zdażają się gdy na wejściu otrzymujemy "$$$$$") i w tym momencie
+                // program się zakończy, musimy sczytać jeszcze jeden znak (czyli już EOF), żeby funkcja
+                // (wywoływana wewnątrz ungetc) zwolniła pamięć. Zauważyłem, że jeśli się tego nie zrobi,
+                // to funkcja ta nie zwalnia pamięci. Był to jeden z moich najdziwniejszych wycieków pamięci.
+                // Jeśli istnieje jakieś bardziej eleganckie rozwiązanie, zachęcam do wprowadzenia go tutaj.
     exit(1);
 }
 
@@ -150,9 +155,9 @@ static void throwError(ErrorType errorType, size_t charNum)
  * Pobiera znaki ze standardowego wejścia dopóki są one
  * białymi znakami, albo komentarzami. W przypadku komentarzy
  * wczytuje znaki dopóki komentarz nie zostanie "zamknięty".
- * Jeśli przed zamknięciem komentarza wystąpi koniec pliku, rzuca
- * błąd końca pliku.
- * @return TRUE jeśli jest ok FALSE jak eof.
+ * Jeśli przed zamknięciem komentarza wystąpi koniec pliku
+ * zwraca FALSE.
+ * @return FALSE jeśli EOF wystąpi przed zamknięciem komentarza, wpp TRUE.
  */
 static bool eatAllCommentsAndWhiteSpaces()
 {
@@ -162,6 +167,8 @@ static bool eatAllCommentsAndWhiteSpaces()
     while (((_isComment = isComment(c)) || isWhiteSpace(c)) && (!isEOF(c)))
     {
         bitCounter(INCREASE, 1);
+
+        // Jeśli otworzyliśmy komentarz, "jemy" go aż do zamknięcia albo końca pliku.
         if (_isComment)
         {
             bitCounter(INCREASE, 1);
@@ -209,7 +216,7 @@ static TokenType getTokenType()
             if ((c = getchar()) == 'W')
             {
                 bitCounter(INCREASE, 1);
-                if ((!isDigit(d = getchar())) && (!isLetter(d))) // Musi wystąpić spacja lub komentarz.
+                if ((!isDigit(d = getchar())) && (!isLetter(d)))
                 {
                     ungetc(d, stdin);
                     return NEW;
@@ -229,7 +236,7 @@ static TokenType getTokenType()
             if ((c = getchar()) == 'L')
             {
                 bitCounter(INCREASE, 1);
-                if ((!isDigit(d = getchar())) && (!isLetter(d))) // Musi wystąpić spacja lub komentarz.
+                if ((!isDigit(d = getchar())) && (!isLetter(d)))
                 {
                     ungetc(d, stdin);
                     return DEL;
@@ -277,6 +284,7 @@ static char* getNum()
     if (!num)
         return NULL;
 
+    // Sczytujemy cyfry, póki to możliwe, w miarę potrzeb zwiększamy tablice.
     while (isDigit(currentChar = getchar()))
     {
         if (currentPosition == numSize)
@@ -290,6 +298,7 @@ static char* getNum()
     }
     ungetc(currentChar,stdin);
 
+    // Dopisujemy jeszcze znak '\0'
     if (currentPosition == numSize)
     {
         numSize *= 2;
@@ -299,6 +308,7 @@ static char* getNum()
     }
     num[currentPosition] = '\0';
 
+    // Ustawiamy aktualna pozycję, na ostatnią cyfrę.
     bitCounter(INCREASE, currentPosition);
 
     return num;
@@ -318,6 +328,7 @@ static char* getId()
     if (!num)
         return NULL;
 
+    // Sczytujemy cyfry i litery, póki to możliwe, w miarę potrzeb zwiększamy tablice.
     while (isLetter(currentChar = getchar()) || isDigit(currentChar))
     {
         if (currentPosition == numSize)
@@ -341,12 +352,13 @@ static char* getId()
     }
     num[currentPosition] = '\0';
 
+    // Ustawiamy aktualną pozycję, na ostatni znak.
     bitCounter(INCREASE, currentPosition);
 
     return num;
 }
 
-
+/// Zwalnia pamięć z napisów zawartych w tablicy, ale nie samą tablicę.
 static void freeStringArray(char **arr, int length)
 {
     for (int i = 0; i < length; i++)
@@ -355,14 +367,17 @@ static void freeStringArray(char **arr, int length)
 }
 
 /** @brief Próbuje utworzyć instrkucję.
- *
- * @param[in] token
- * @param[in] word
- * @param[in] amountOfTokens
- * @param[in] posOfToken
+ * Próbuje utworzyć instrukcję, na podstawie schematu tokenów.
+ * Jeśli schemat nie pasuje, rzuca błąd syntaktyczny drugiego tokena.
+ * @param[in,out] instruction - wskaźnik na instrukcję, która będzie nadpisana;
+ * @param[in] token - tablica tokenów;
+ * @param[in] word - tablica sczytanych słów (numery lub ID);
+ * @param[in] amountOfTokens - liczba tokenów to 2 lub 3;
+ * @param[in] posOfToken - tablica pozycji tokenów.
  * @return instrukcja gotowa do wykonania funkcją @p performInstruction.
  */
-static void tryBuildInstruction(Instruction *instruction, TokenType token[2], char *word[2], int amountOfTokens, size_t posOfToken[2])
+static void tryBuildInstruction(Instruction *instruction, TokenType const token[2], char *word[2],
+                                int amountOfTokens, size_t posOfToken[2])
 {
     if (amountOfTokens == 3)
     {
@@ -408,6 +423,12 @@ static void tryBuildInstruction(Instruction *instruction, TokenType token[2], ch
     }
 }
 
+/// Funkcja pomocnicza do @p getInstruction.
+static inline void throwErrorAndFreeArr(ErrorType errorType, size_t numOfChar, char **arr, int sizeOfCharArr)
+{
+    freeStringArray(arr, sizeOfCharArr);
+    throwError(errorType, numOfChar);
+}
 
 extern bool getInstruction(Instruction *instruction)
 {
@@ -419,9 +440,11 @@ extern bool getInstruction(Instruction *instruction)
     size_t posOfToken[2]; // tablica numerów pierwszych bitów tokenów.
     clearInstruction(instruction);
 
+    // Zjadamy komentarze i białe znaki.
     if (!eatAllCommentsAndWhiteSpaces())
         throwError(EOF_ERROR, 0);
 
+    // Sczytujemy dwa tokeny, lub rzucamy błędem w momencie gry jest już oczywisty.
     for (int i = 0; i < 2; i++)
     {
         token[i] = getTokenType();
@@ -430,29 +453,21 @@ extern bool getInstruction(Instruction *instruction)
         switch (token[i])
         {
             case INVALID_TOKEN:
-                freeStringArray(word, 2);
-                throwError(SYNTACTIC_ERROR, posOfToken[i]);
+                throwErrorAndFreeArr(SYNTACTIC_ERROR, posOfToken[i], word, 2);
             case EOF_TOKEN:
                 if (i == 0)
-                    return false;
+                    return false;   // Jedyny przypadek gdy zwracamy false.
                 else
-                    freeStringArray(word, 2);
-                    throwError(EOF_ERROR, posOfToken[i]);
+                    throwErrorAndFreeArr(EOF_ERROR, posOfToken[i], word, 2);
             case ID:
                 if (i == 0)
                     throwError(SYNTACTIC_ERROR, posOfToken[i]);
                 else if ((word[i] = getId()) == NULL)
-                {
-                    freeStringArray(word, 2);
-                    throwError(OUT_OF_MEMORY_ERROR, posOfToken[i]);
-                }
+                    throwErrorAndFreeArr(OUT_OF_MEMORY_ERROR, posOfToken[i], word, 2);
                 break;
             case NUM:
                 if ((word[i] = getNum()) == NULL)
-                {
-                    freeStringArray(word, 2);
-                    throwError(OUT_OF_MEMORY_ERROR, posOfToken[i]);
-                }
+                    throwErrorAndFreeArr(OUT_OF_MEMORY_ERROR, posOfToken[i], word, 2);
                 break;
             case ARROW:
                 if (i == 0)
@@ -465,10 +480,7 @@ extern bool getInstruction(Instruction *instruction)
                 break;
         }
         if(!eatAllCommentsAndWhiteSpaces())
-        {
-            freeStringArray(word, 2);
-            throwError(EOF_ERROR, 0);
-        }
+            throwErrorAndFreeArr(EOF_ERROR, posOfToken[i], word, 2);
     }
 
     // Jedyny przypadek gdy instrukcja ma trzy tokeny.
@@ -487,17 +499,15 @@ extern bool getInstruction(Instruction *instruction)
         }
         else if (tokenType == EOF_TOKEN)
         {
-            freeStringArray(word, 2);
-            throwError(EOF_ERROR, numOfThirdToken);
+            throwErrorAndFreeArr(EOF_ERROR, numOfThirdToken, word, 2);
         }
         else
         {
-            freeStringArray(word, 2);
-            throwError(SYNTACTIC_ERROR, numOfThirdToken);
+            throwErrorAndFreeArr(SYNTACTIC_ERROR, numOfThirdToken, word, 2);
         }
     }
+    // Próbujemy zbudować instrukcję z tokenów.
     tryBuildInstruction(instruction, token, word, amountOfTokens, posOfToken);
-
     return true;
 }
 
@@ -507,6 +517,7 @@ extern void performInstruction(Instruction *ins, PhoneForwardsCenter *pfc)
 {
     const PhoneNumbers *pn;
 
+    // Obsługujemy przypadek, gdy nie ma ustawionej aktualnej bazy przekierowań.
     if (pfc->currentBase == NULL)
     {
         switch (ins->instrName)
@@ -524,6 +535,7 @@ extern void performInstruction(Instruction *ins, PhoneForwardsCenter *pfc)
         }
     }
 
+    // Wykonujemy odpowiednie funkcje.
     switch (ins->instrName)
     {
         case NEW_PHFWD_BASE:
@@ -563,13 +575,6 @@ extern void performInstruction(Instruction *ins, PhoneForwardsCenter *pfc)
         default:
             break;
     }
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-
-extern bool instructionIsEndOfFile(Instruction *instruction)
-{
-    return instruction->instrName == END_OF_FILE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
