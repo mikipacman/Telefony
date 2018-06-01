@@ -6,11 +6,17 @@ int main()
 {
     PhoneForwardsCenter *phoneForwardsCenter = initPhoneForwardsCenter();
     if (!phoneForwardsCenter)
+    {
+        throwError(OUT_OF_MEMORY_ERROR, 0);
         return 1;
+    }
 
     Instruction *instruction = initInstruction();
     if (!instruction)
+    {
+        throwError(OUT_OF_MEMORY_ERROR, 0);
         return 1;
+    }
 
     bool isNotEOF;
 

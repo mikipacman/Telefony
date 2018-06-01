@@ -25,7 +25,7 @@ set(SOURCE_FILES
     src/phone_forward.h
     src/easyString.c
     src/easyString.h
-    src/phone_forward_example.c
+        src/main.c
     src/cyclicDoubleList.c
     src/cyclicDoubleList.h
     src/phone_forward_interface.h

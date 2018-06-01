@@ -111,13 +111,7 @@ extern void deleteInstruction(Instruction *instruction)
 
 //----------------------------------------------------------------------------------------------------------------------
 
-/** @brief Wyrzuca błąd.
- * W zależności o rodzaju błędu wypisuje na standardowe wyjście diagnostyczne
- * stosowny komunikat o błędzie i kończy działanie programu.
- * @param[in] errorType - rodzaj błędu;
- * @param[in] charNum - numer bitu w którym wystąpił błąd.
- */
-static void throwError(ErrorType errorType, size_t charNum)
+extern void throwError(ErrorType errorType, size_t charNum)
 {
     switch (errorType)
     {
@@ -138,6 +132,10 @@ static void throwError(ErrorType errorType, size_t charNum)
             break;
         case Q_MARK_ERROR:
             fprintf(stderr, "ERROR ? %zu\n", charNum);
+            break;
+        case OUT_OF_MEMORY_ERROR:
+            fprintf(stderr, "OUT OF MEMORY ERROR\n");
+            break;
         default:
             break;
     }

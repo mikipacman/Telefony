@@ -2,8 +2,6 @@
  * Interfejs klasy obsługującej tekstową interakcję z klasą do
  * obsługi przekierowań telefonicznych @p phone_forward.
  *
- * // TODO: dodać przykładowe użycie i bardziej rozległy opis.
- *
  * @author Mikołaj Pacek <miki.pacman@gmail.com>
  */
 
@@ -148,5 +146,13 @@ extern void performInstruction(Instruction *instruction, PhoneForwardsCenter *ph
  * @param[in] ins - wskaźnik na instrukcję.
  */
 extern void atExitClean(PhoneForwardsCenter *pfc, Instruction *ins);
+
+/** @brief Wyrzuca błąd.
+ * W zależności o rodzaju błędu wypisuje na standardowe wyjście diagnostyczne
+ * stosowny komunikat o błędzie i kończy działanie programu.
+ * @param[in] errorType - rodzaj błędu;
+ * @param[in] charNum - numer bitu w którym wystąpił błąd.
+ */
+extern void throwError(ErrorType errorType, size_t charNum);
 
 #endif // __PHONE_FORWARD_INTERFACE_H__
