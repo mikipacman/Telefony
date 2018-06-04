@@ -19,10 +19,23 @@ extern bool hasOnlyDigits(char const *string)
 
     int i = -1;
     while  (string[++i] != '\0')
-        if ('0' > string[i] || string[i] > '9')
+        if ('0' > string[i] || string[i] > ';')
             return false;
 
     return true;
+}
+
+
+extern bool hasAnyDigits(char const *string)
+{
+    int i = 0;
+    while (string[i] != '\0')
+    {
+        if ('0' <= string[i] && string[i] <= ';')
+            return true;
+        i++;
+    }
+    return false;
 }
 
 extern int charToInt(char c)
@@ -32,7 +45,7 @@ extern int charToInt(char c)
 
 extern bool isDigit(int c)
 {
-    return '0' <= c && c <= '9';
+    return '0' <= c && c <= ';';
 }
 
 extern bool isLetter(int c)

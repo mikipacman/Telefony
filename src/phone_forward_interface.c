@@ -14,7 +14,7 @@
 #include <stddef.h>
 
 /// Typ nazw możliwych rodzaji tokenów.
-typedef enum {NEW, DEL, ARROW, Q_MARK, ID, NUM, INVALID_TOKEN, EOF_TOKEN} TokenType;
+typedef enum {NEW, DEL, ARROW, Q_MARK, ID, NUM, INVALID_TOKEN, MONKEY, EOF_TOKEN} TokenType;
 
 /// Typ komend do licznika pozycji bitów.
 typedef enum {GET_CURRENT_POS, GET_LAST_TOKEN_POS, SET_CURRENT_POS_TO,
@@ -133,6 +133,9 @@ extern void throwError(ErrorType errorType, size_t charNum)
         case Q_MARK_ERROR:
             fprintf(stderr, "ERROR ? %zu\n", charNum);
             break;
+        case MONKEY_ERROR:
+            fprintf(stderr, "ERROR @ %zu\n", charNum);
+            break;
         case OUT_OF_MEMORY_ERROR:
             fprintf(stderr, "OUT OF MEMORY ERROR\n");
             break;
@@ -198,6 +201,10 @@ static TokenType getTokenType()
     size_t currentPos = bitCounter(INCREASE, 1);
     bitCounter(SET_LAST_TOKEN_POS_TO, currentPos);
 
+    if (a == '@')
+    {
+        return MONKEY;
+    }
     if (a == '?')
     {
         return Q_MARK;
@@ -414,6 +421,12 @@ static void tryBuildInstruction(Instruction *instruction, TokenType const token[
         instruction->instrType.delPhfwd.num = word[1];
         instruction->posOfOperator = posOfToken[0];
     }
+    else if (token[0] == MONKEY && token[1] == NUM)
+    {
+        instruction->instrName = COUNT_NON_TRIVIAL;
+        instruction->instrType.countNonTrivial.num = word[1];
+        instruction->posOfOperator = posOfToken[0];
+    }
     else
     {
         freeStringArray(word, 2);
@@ -474,6 +487,7 @@ extern bool getInstruction(Instruction *instruction)
             case NEW:
             case DEL:
             case Q_MARK:
+            case MONKEY:
             default:
                 break;
         }
@@ -532,10 +546,15 @@ extern void performInstruction(Instruction *ins, PhoneForwardsCenter *pfc)
             case REVERSE_PHFWD:
                 throwError(Q_MARK_ERROR, ins->posOfOperator);
                 break;
+            case COUNT_NON_TRIVIAL:
+                throwError(MONKEY_ERROR, ins->posOfOperator);
+                break;
             default:
                 break;
         }
     }
+
+    size_t temp = 0;
 
     // Wykonujemy odpowiednie funkcje.
     switch (ins->instrName)
@@ -571,6 +590,13 @@ extern void performInstruction(Instruction *ins, PhoneForwardsCenter *pfc)
             phnumPrint(pn);
             phnumDelete(pn);
             break;
+        case COUNT_NON_TRIVIAL:
+            temp = strlen(ins->instrType.countNonTrivial.num);
+            if (temp > 12)
+                temp -= 12;
+            else
+                temp = 0;
+            printf("%zu\n", phfwdNonTrivialCount(pfc->currentBase->pfBase, ins->instrType.countNonTrivial.num, temp));
         case END_OF_FILE:
             throwError(EOF_ERROR, ins->posOfOperator);
             break;
@@ -603,6 +629,9 @@ extern void clearInstruction(Instruction *instruction)
             break;
         case DEL_PHFWD:
             free(instruction->instrType.delPhfwd.num);
+            break;
+        case COUNT_NON_TRIVIAL:
+            free(instruction->instrType.countNonTrivial.num);
             break;
         case EMPTY:
         default:
@@ -637,3 +666,4 @@ extern void atExitClean(PhoneForwardsCenter *pfc, Instruction *ins)
         deleteInstruction(y);
     }
 }
+

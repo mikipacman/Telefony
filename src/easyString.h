@@ -16,6 +16,14 @@
  */
 extern bool hasOnlyDigits(char const *string);
 
+/** @brief Sprawdza, czy napis ma jakąś cyfrę.
+ * Sprawdza czy napis zawiera w sobie choć jeden znak
+ * ze zbioru {1, 2,...9, 0, :, ;}.
+ * @param string - wskaźnik na napis.
+ * @return TRUE jeśli zawiera, wpp FALSE.
+ */
+extern bool hasAnyDigits(char const *string);
+
 /** @brief Zamienia znak na cyfrę.
  * Zamienia znak @p c na cyfrę.
  * @param[in] c - znak reprezentujący cyfrę.
@@ -46,7 +54,6 @@ extern bool isEOF(int c);
  * @return TRUE jeśli jest, wpp FALSE.
  */
 extern bool isWhiteSpace(int c);
-
 
 /** @brief Sprawdza czy znak jest komentarzem.
  * Jeśli znak jest '$' i znak sczytany ze standardowego wejścia też zwraca TRUE.

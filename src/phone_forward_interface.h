@@ -15,11 +15,11 @@
 
 ///Typ nazw możliwych instrukcji.
 typedef enum {NEW_PHFWD_BASE, DEL_PHFWD_BASE, ADD_PHFWD, DEL_PHFWD,
-                        GET_PHFWD, REVERSE_PHFWD, END_OF_FILE, EMPTY} InstructionName;
+                        GET_PHFWD, REVERSE_PHFWD, COUNT_NON_TRIVIAL, END_OF_FILE, EMPTY} InstructionName;
 
 /// Typ nazw możliwych błędów.
 typedef enum {SYNTACTIC_ERROR, EOF_ERROR, NEW_ERROR, DEL_ERROR,
-                ARROW_ERROR, Q_MARK_ERROR, OUT_OF_MEMORY_ERROR} ErrorType;
+                ARROW_ERROR, Q_MARK_ERROR, OUT_OF_MEMORY_ERROR, MONKEY_ERROR} ErrorType;
 
 /// Struktura przechowująca informacje o instrukcji dodawania bazy przekierowań.
 typedef struct
@@ -58,15 +58,22 @@ typedef struct
     char *num;          ///< Wskaźnik na napis reprezentujący numer na który zostaną wygenerowane przekierowania.
 }ReversePhfwd;
 
+/// Struktura przechowująca informacje o instrukcji zliczania nietrywialnych numerów.
+typedef struct
+{
+    char *num;          ///< Wskaźnik na napis reprezentujący zbiór dozwolonych cyfr.
+}CountNonTrivial;
+
 /// Pomocnicza unia struktur.
 typedef union
 {
-    NewPhfwdBase newPhfwdBase;  ///< Informacje o instrukcji dodawania bazy przekierowań.
-    DelPhfwdBase delPhfwdBase;  ///< Informacje o instrukcji usuwania bazy przekierowań.
-    AddPhfwd addPhfwd;          ///< Informacje o instrukcji dodawania przekierowania.
-    DelPhfwd delPhfwd;          ///< Informacje o instrukcji usuwania przekierowania.
-    GetPhfwd getPhfwd;          ///< Informacje o instrukcji brania przekierowania numeru.
-    ReversePhfwd reversePhfwd;  ///< Informacje o instrukcji brania przekierowań na numer.
+    NewPhfwdBase newPhfwdBase;          ///< Informacje o instrukcji dodawania bazy przekierowań.
+    DelPhfwdBase delPhfwdBase;          ///< Informacje o instrukcji usuwania bazy przekierowań.
+    AddPhfwd addPhfwd;                  ///< Informacje o instrukcji dodawania przekierowania.
+    DelPhfwd delPhfwd;                  ///< Informacje o instrukcji usuwania przekierowania.
+    GetPhfwd getPhfwd;                  ///< Informacje o instrukcji brania przekierowania numeru.
+    ReversePhfwd reversePhfwd;          ///< Informacje o instrukcji brania przekierowań na numer.
+    CountNonTrivial countNonTrivial;    ///< Informacje o instrukcji zliczania nietrywialnych numerów.
 }InstructionType;
 
 /**
