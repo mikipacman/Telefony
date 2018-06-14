@@ -18,7 +18,7 @@ typedef enum {NEW, DEL, ARROW, Q_MARK, ID, NUM, INVALID_TOKEN, MONKEY, EOF_TOKEN
 
 /// Typ komend do licznika pozycji bitów.
 typedef enum {GET_CURRENT_POS, GET_LAST_TOKEN_POS, SET_CURRENT_POS_TO,
-                                        SET_LAST_TOKEN_POS_TO, INCREASE} BitCounterCommand;
+    SET_LAST_TOKEN_POS_TO, INCREASE} BitCounterCommand;
 
 /** @brief Licznik sczytanych bitów.
  * Funkcja zawiera dwie zmienne statyczne przechowujące informacje o numerze pierwszego
@@ -143,12 +143,12 @@ extern void throwError(ErrorType errorType, size_t charNum)
             break;
     }
     getchar();  // Ten getchar wygląda na niepotrzebny, jednak jest on po to, aby w skrajnym przypadku, kiedy w momencie
-                // kiedy strumień wejścia jest pusty, a my wrzucimy na niego ungetc'em jakiś znak, a następnie go
-                // sczytamy (takie sytuacje zdażają się gdy na wejściu otrzymujemy "$$$$$") i w tym momencie
-                // program się zakończy, musimy sczytać jeszcze jeden znak (czyli już EOF), żeby funkcja
-                // (wywoływana wewnątrz ungetc) zwolniła pamięć. Zauważyłem, że jeśli się tego nie zrobi,
-                // to funkcja ta nie zwalnia pamięci. Był to jeden z moich najdziwniejszych wycieków pamięci.
-                // Jeśli istnieje jakieś bardziej eleganckie rozwiązanie, zachęcam do wprowadzenia go tutaj.
+    // kiedy strumień wejścia jest pusty, a my wrzucimy na niego ungetc'em jakiś znak, a następnie go
+    // sczytamy (takie sytuacje zdażają się gdy na wejściu otrzymujemy "$$$$$") i w tym momencie
+    // program się zakończy, musimy sczytać jeszcze jeden znak (czyli już EOF), żeby funkcja
+    // (wywoływana wewnątrz ungetc) zwolniła pamięć. Zauważyłem, że jeśli się tego nie zrobi,
+    // to funkcja ta nie zwalnia pamięci. Był to jeden z moich najdziwniejszych wycieków pamięci.
+    // Jeśli istnieje jakieś bardziej eleganckie rozwiązanie, zachęcam do wprowadzenia go tutaj.
     exit(1);
 }
 
@@ -455,7 +455,7 @@ extern bool getInstruction(Instruction *instruction)
     if (!eatAllCommentsAndWhiteSpaces())
         throwError(EOF_ERROR, 0);
 
-    // Sczytujemy dwa tokeny, lub rzucamy błędem w momencie gry jest już oczywisty.
+    // Sczytujemy dwa tokeny, lub rzucamy błędem w momencie gdy jest już oczywisty.
     for (int i = 0; i < 2; i++)
     {
         token[i] = getTokenType();
@@ -491,13 +491,16 @@ extern bool getInstruction(Instruction *instruction)
             default:
                 break;
         }
-        if(!eatAllCommentsAndWhiteSpaces())
+        if (i == 0 && !eatAllCommentsAndWhiteSpaces())
             throwErrorAndFreeArr(EOF_ERROR, posOfToken[i], word, 2);
     }
 
     // Jedyny przypadek gdy instrukcja ma trzy tokeny.
     if (token[0] == NUM && token[1] == ARROW)
     {
+        if (!eatAllCommentsAndWhiteSpaces())
+            throwErrorAndFreeArr(EOF_ERROR, posOfToken[1], word, 2);
+
         TokenType tokenType = getTokenType();
         size_t numOfThirdToken = bitCounter(GET_LAST_TOKEN_POS, 0);
         if (tokenType == NUM)
@@ -592,11 +595,12 @@ extern void performInstruction(Instruction *ins, PhoneForwardsCenter *pfc)
             break;
         case COUNT_NON_TRIVIAL:
             temp = strlen(ins->instrType.countNonTrivial.num);
-            if (temp > 12)
-                temp -= 12;
+            if (temp > NUM_OF_DIGITS)
+                temp -= NUM_OF_DIGITS;
             else
                 temp = 0;
             printf("%zu\n", phfwdNonTrivialCount(pfc->currentBase->pfBase, ins->instrType.countNonTrivial.num, temp));
+            break;
         case END_OF_FILE:
             throwError(EOF_ERROR, ins->posOfOperator);
             break;
@@ -666,4 +670,3 @@ extern void atExitClean(PhoneForwardsCenter *pfc, Instruction *ins)
         deleteInstruction(y);
     }
 }
-

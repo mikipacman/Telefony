@@ -25,6 +25,11 @@ numer > numer - dodaje przekierowanie z numeru na numer. <br>
 numer ? - wypisuje przekierowania z podanego numeru. <br>
 ? numer - wypisuje przekierowania na podany numer. <br>
 DEL numer - usuwa wszystkie przekierowania, których numer jest prefiksem. <br>
+@ numer - wypisuje jedną linię (zakończoną znakiem przejścia no nowej linii)
+zawierającą liczbę dziesiętną (bez zer wiodących i innych dodatkowych znaków)
+będącą wynikiem działania funkcji phfwdNonTrivialCount dla aktualnej bazy
+przekierowań, gdzie jako parametr set podano napis reprezentujący numer, a wartość
+len to max(0, |numer| - 12), przy czym |numer| oznacza liczbę cyfr numeru numer. <br>
 <br>
 Dodatkowo możliwe jest wpisywanie komentarzy, które otwieramy i zamykamy znakiem "$$".
 W razie błedu syntaktycznego lub wykonania wypisywany jest odpowiedni komunikat o błędzie, a działanie

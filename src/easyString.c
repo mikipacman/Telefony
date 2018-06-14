@@ -5,6 +5,7 @@
  */
 
 #include "easyString.h"
+#include "phone_forward.h"
 #include "phone_forward_base_list.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -45,7 +46,7 @@ extern int charToInt(char c)
 
 extern bool isDigit(int c)
 {
-    return '0' <= c && c <= ';';
+    return '0' <= c && c <= '0' + NUM_OF_DIGITS;
 }
 
 extern bool isLetter(int c)

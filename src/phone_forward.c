@@ -29,7 +29,7 @@ PhoneForward* phfwdNew(void)
     if ((newPF->listOfFwdToThisNum = initCDList()) == NULL)
         return NULL;
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < NUM_OF_DIGITS; i++)
         newPF->nextDigit[i] = NULL;
 
     newPF->forward = NULL;
@@ -51,7 +51,7 @@ void phfwdDelete(PhoneForward *pf)
 
     // Usuwamy rekurencyjnie jego dzieci.
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < NUM_OF_DIGITS; i++)
         if (pf->nextDigit[i] != NULL)
             phfwdDelete(pf->nextDigit[i]);
 
@@ -84,9 +84,9 @@ void removeUnnecessaryNodes(PhoneForward *node, PhoneForward* toNode)
     // Sprawdzamy czy node ma jakieś dzieci, przekierowanie lub coś jest na niego przekierowane.
 
     bool hasAnyChildren = false;
-    for (int i = 0; i < 12 && !hasAnyChildren; i++)
-            if (node->nextDigit[i] != NULL)
-                hasAnyChildren = true;
+    for (int i = 0; i < NUM_OF_DIGITS && !hasAnyChildren; i++)
+        if (node->nextDigit[i] != NULL)
+            hasAnyChildren = true;
 
     if (hasAnyChildren)
         return;
@@ -137,7 +137,7 @@ static PhoneForward* emptyPhoneForwardNode(char c, PhoneForward *father)
     pf->forward = NULL;
     pf->placeInForwardList = NULL;
     pf->fwdNode = NULL;
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < NUM_OF_DIGITS; i++)
         pf->nextDigit[i] = NULL;
 
     return pf;
@@ -241,7 +241,7 @@ void removeNodes(PhoneForward *node)
 
     // Usuwamy rekurencyjnie poddrzewa dzieci node'a.
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < NUM_OF_DIGITS; i++)
         if (node->nextDigit[i] != NULL)
             removeNodes(node->nextDigit[i]);
 
@@ -261,7 +261,7 @@ void removeNodes(PhoneForward *node)
     // Sprawdzamy czy node ma jakieś dzieci lub coś jest na niego przekierowane.
 
     bool hasAnyChildren = false;
-    for (int i = 0; i < 12 && !hasAnyChildren; i++)
+    for (int i = 0; i < NUM_OF_DIGITS && !hasAnyChildren; i++)
         if (node->nextDigit[i] != NULL)
             hasAnyChildren = true;
     if (hasAnyChildren)
@@ -656,53 +656,91 @@ void phnumPrint(PhoneNumbers const *pnum)
 
 //----------------------------------------------------------------------------------------------------------------------
 
-/** @brief Zlicza nietrywialne numery w poddrzewie.
- * eeeeeeeeeeeeeeeeeeeeeeeee
- * @param pf - wskaźnik na poddrzewo struktury przechowującej przekierowania telefoniczne;
- * @param set - tablica w której i-ty element, mówi o tym, czy numer ma zawierać cyfrę
- * @param len - długość zliczanych numerów;
- * @param currentLevel - obecny poziom zagłębienia w drzewie;
- * @param hadNonTrivialNum - określa czy po drodze od korzenia drzewa do obecnego node'a
- * występował node reprezentujący nietrywialny numer.
+/** @brief Szybko potęguje.
+ * @param[in] x - podstawa potęgi;
+ * @param[in] n - wykładnik potęgi.
+ * @return @p x do potęgi @p n.
+ */
+static size_t fastPower(size_t x, size_t n)
+{
+    if (n == 0)
+        return 1;
+
+    size_t y = 1;
+
+    while (n > 1)
+    {
+        if (n % 2 == 0)
+        {
+            x *= x;
+            n /= 2;
+        }
+        else
+        {
+            y = x * y;
+            x *= x;
+            n = (n - 1) / 2;
+        }
+    }
+
+    return x * y;
+}
+
+
+/** @brief Zlicza nietrywialne numery długości @p len w poddrzewie.
+ * @param[in] pf - wskaźnik na poddrzewo struktury przechowującej przekierowania telefoniczne;
+ * @param[in] legalDigits - tablica w której i-ty element, mówi o tym, czy numer ma zawierać cyfrę;
+ * @param[in] len - długość zliczanych numerów;
+ * @param[in] currentLevel - obecny poziom zagłębienia w drzewie;
+ * @param[in] numOfLegalDigits - liczba dostępnych cyrf.
  * @return liczba nuetrywialnych numerów.
  */
-static size_t countNonTrivialPhfwdInSubtree(PhoneForward *pf, bool const legalDigits[12], size_t len,
-                                            size_t currentLevel, bool hadNonTrivialNum)
+static size_t countNonTrivialPhFwdInSubtree(PhoneForward *pf, bool const legalDigits[NUM_OF_DIGITS], size_t len,
+                                            size_t currentLevel, int numOfLegalDigits)
 {
+    if (!pf || len < currentLevel)
+        return 0;
+
+    if (!cdListIsEmpty(pf->listOfFwdToThisNum))
+        return fastPower((size_t)numOfLegalDigits, len - currentLevel);
+
     size_t sum = 0;
-    hadNonTrivialNum = hadNonTrivialNum || !cdListIsEmpty(pf->listOfFwdToThisNum);
 
-    if (len == currentLevel)
-        return (size_t)hadNonTrivialNum;
-
-    for (int i = 0; i < 12; i++)
-        if (legalDigits[i])
-            sum += countNonTrivialPhfwdInSubtree(pf->nextDigit[i], legalDigits,
-                                                 len, currentLevel + 1, hadNonTrivialNum);
+    for (int i = 0; i < NUM_OF_DIGITS; i++)
+        if (legalDigits[i] && (pf->nextDigit[i]))
+            sum += countNonTrivialPhFwdInSubtree(pf->nextDigit[i], legalDigits,
+                                                 len, currentLevel + 1, numOfLegalDigits);
     return sum;
 }
 
-static void getDigitSet(char const *set, bool legalDigits[12])
+/** @brief Zaznacza w tablicy, które cyfry występują w napisie @p set.
+ * Dodatkowo zwraca ilość tych cyfr.
+ * @param[in] set - wskaźnik na napis.
+ * @param[in,out] legalDigits - wskaźnik na tablicę legalnych znaków.
+ * @return liczba cyfr.
+ */
+static int getDigitSet(char const *set, bool legalDigits[NUM_OF_DIGITS])
 {
     size_t i = 0;
-    int numOdDigits = 0;
-    for (int j = 0; j < 12; j++)
+    int numOfDigits = 0;
+    for (int j = 0; j < NUM_OF_DIGITS; j++)
         legalDigits[j] = false;
 
     while (set[i] != '\0')
     {
         if (isDigit(set[i]))
         {
-            if (!legalDigits[charToInt(set[i]) - 1])
+            if (!legalDigits[charToInt(set[i])])
             {
-                numOdDigits++;
-                legalDigits[charToInt(set[i]) - 1] = true;
+                numOfDigits++;
+                legalDigits[charToInt(set[i])] = true;
             }
         }
-        if (numOdDigits == 12)
-            return;
+        if (numOfDigits == NUM_OF_DIGITS)
+            return numOfDigits;
         i++;
     }
+    return numOfDigits;
 }
 
 extern size_t phfwdNonTrivialCount(PhoneForward *pf, char const *set, size_t len)
@@ -710,13 +748,13 @@ extern size_t phfwdNonTrivialCount(PhoneForward *pf, char const *set, size_t len
     if (!pf || !set || !hasAnyDigits(set) || len == 0)
         return 0;
 
-    bool legalDigits[12];
-    getDigitSet(set, legalDigits);
+    bool legalDigits[NUM_OF_DIGITS];
+    int numOfDigits =  getDigitSet(set, legalDigits);
 
     size_t sum = 0;
-    for (int i = 0; i < 12; i++)
-        if (set[i])
-            sum += countNonTrivialPhfwdInSubtree(pf->nextDigit[i], legalDigits, len, 1, false);
+    for (int i = 0; i < NUM_OF_DIGITS; i++)
+        if (legalDigits[i] && (pf->nextDigit[i]))
+            sum += countNonTrivialPhFwdInSubtree(pf->nextDigit[i], legalDigits, len, 1, numOfDigits);
 
     return sum;
 }

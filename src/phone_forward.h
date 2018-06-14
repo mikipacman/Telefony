@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include "cyclicDoubleList.h"
 
+#define NUM_OF_DIGITS 12    ///< Liczba legalnych cyfr dostępnych w numerach począwszy od 0.
+
 /** @brief Struktura przechowująca przekierowania numerów telefonów.
  * Struktura będąca drzewem typu trie, która przechowuje przekierowania
  * numerów telefonów.
@@ -24,7 +26,7 @@ typedef struct PF
     char *forward;                  ///< Wskaźnik na napis reprezentujący przekierowanie.
     struct PF *fwdNode;             ///< Wskaźnik na node'a reprezentującego numer przekierowania.
     struct PF *father;              ///< Wskaźnik na ojca.
-    struct PF *nextDigit[12];       ///< Tablica wskaźników na dzieci.
+    struct PF *nextDigit[NUM_OF_DIGITS];       ///< Tablica wskaźników na dzieci.
     struct CD *listOfFwdToThisNum;  ///< Wskaźnik na strażnika listy zawierającej numery przekierowań na danego node'a.
     struct CD *placeInForwardList;  ///< Wskaźnik na miejsce napisu odpowiadającego danemu node'owi w liście @p listOfFwdToThisNum node'a @p fwdNode
 }PhoneForward;
@@ -143,9 +145,9 @@ void phnumPrint(PhoneNumbers const *pnum);
  * cyfry, które znajdują się w napisie @p set. Jeśli wskaźnik @p pf ma wartość NULL, @p set
  * ma wartość NULL, @p set jest pusty, @p set nie zawiera żadnej cyfry lub parametr @p len
  * jest równy zeru, wynikiem jest zero.
- * @param pf - wskaźnik na strukturę przechowującą przekierowania numerów;
- * @param set - wskaźnik na napis przechowujące dozwolone cyfry;
- * @param len - długość numerów.
+ * @param[in] pf - wskaźnik na strukturę przechowującą przekierowania numerów;
+ * @param[in] set - wskaźnik na napis przechowujący dozwolone cyfry;
+ * @param[in] len - długość numerów.
  * @return liczba nietrywialnych numerów.
  */
 extern size_t phfwdNonTrivialCount(PhoneForward *pf, char const *set, size_t len);
