@@ -465,11 +465,13 @@ extern bool getInstruction(Instruction *instruction)
         {
             case INVALID_TOKEN:
                 throwErrorAndFreeArr(SYNTACTIC_ERROR, posOfToken[i], word, 2);
+                break;
             case EOF_TOKEN:
                 if (i == 0)
                     return false;   // Jedyny przypadek gdy zwracamy false.
                 else
                     throwErrorAndFreeArr(EOF_ERROR, posOfToken[i], word, 2);
+                break;
             case ID:
                 if (i == 0)
                     throwError(SYNTACTIC_ERROR, posOfToken[i]);
