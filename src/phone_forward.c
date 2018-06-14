@@ -728,7 +728,7 @@ static int getDigitSet(char const *set, bool legalDigits[NUM_OF_DIGITS])
 
     while (set[i] != '\0')
     {
-        if (isDigit(set[i]))
+        if (isSpecialDigit(set[i]))
         {
             if (!legalDigits[charToInt(set[i])])
             {

@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stddef.h>
+#include <ctype.h>
 
 /// Typ nazw możliwych rodzaji tokenów.
 typedef enum {NEW, DEL, ARROW, Q_MARK, ID, NUM, INVALID_TOKEN, MONKEY, EOF_TOKEN} TokenType;
@@ -221,7 +222,7 @@ static TokenType getTokenType()
             if ((c = getchar()) == 'W')
             {
                 bitCounter(INCREASE, 1);
-                if ((!isDigit(d = getchar())) && (!isLetter(d)))
+                if ((!isSpecialDigit(d = getchar())) && (!isLetter(d)))
                 {
                     ungetc(d, stdin);
                     return NEW;
@@ -241,7 +242,7 @@ static TokenType getTokenType()
             if ((c = getchar()) == 'L')
             {
                 bitCounter(INCREASE, 1);
-                if ((!isDigit(d = getchar())) && (!isLetter(d)))
+                if ((!isSpecialDigit(d = getchar())) && (!isLetter(d)))
                 {
                     ungetc(d, stdin);
                     return DEL;
@@ -259,7 +260,7 @@ static TokenType getTokenType()
         ungetc(a, stdin);
         return ID;
     }
-    if (isDigit(a))
+    if (isSpecialDigit(a))
     {
         bitCounter(SET_CURRENT_POS_TO, currentPos - 1);
         ungetc(a, stdin);
@@ -290,7 +291,7 @@ static char* getNum()
         return NULL;
 
     // Sczytujemy cyfry, póki to możliwe, w miarę potrzeb zwiększamy tablice.
-    while (isDigit(currentChar = getchar()))
+    while (isSpecialDigit(currentChar = getchar()))
     {
         if (currentPosition == numSize)
         {
@@ -334,8 +335,9 @@ static char* getId()
         return NULL;
 
     // Sczytujemy cyfry i litery, póki to możliwe, w miarę potrzeb zwiększamy tablice.
-    while (isLetter(currentChar = getchar()) || isDigit(currentChar))
+    while (isLetter(currentChar = getchar()) || isdigit(currentChar))
     {
+
         if (currentPosition == numSize)
         {
             numSize *= 2;

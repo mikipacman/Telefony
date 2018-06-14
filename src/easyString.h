@@ -35,7 +35,7 @@ extern int charToInt(char c);
  * @param c - numer znaku
  * @return TRUE jeśli jest, wpp FALSE.
  */
-extern bool isDigit(int c);
+extern bool isSpecialDigit(int c);
 
 /** @brief Sprawdza czy znak jest literą.
  * @param c - numer znaku

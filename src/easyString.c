@@ -44,7 +44,7 @@ extern int charToInt(char c)
     return c - '0';
 }
 
-extern bool isDigit(int c)
+extern bool isSpecialDigit(int c)
 {
     return '0' <= c && c <= '0' + NUM_OF_DIGITS;
 }
